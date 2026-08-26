@@ -37,8 +37,6 @@ const fases = [
 const ESCALONES = ['', 'lg:ml-[17%]', 'lg:ml-[34%]', 'lg:ml-[51%]'];
 ---
 
-<!-- pb corto a propósito: clavada a 'bottom bottom', todo el aire que sobre
-     abajo empuja la fase 01 bajo el header. -->
 <section id="proceso" class="bg-noche pt-seccion pb-20">
 	<div class="mx-auto max-w-[110rem] px-6 lg:px-10">
 		<!-- Sin data-revela: su entrada es la propia deriva de parallax, y el
@@ -51,13 +49,18 @@ const ESCALONES = ['', 'lg:ml-[17%]', 'lg:ml-[34%]', 'lg:ml-[51%]'];
 			La creatividad sin estrategia es <span class="trazo-bajo">decoración</span>.
 		</p>
 
-		<div data-revela class="mb-12">
-			<h2 class="font-display text-4xl font-normal tracking-[-0.015em] text-hueso lg:text-6xl">
-				El proceso indie
-			</h2>
-		</div>
+		<!-- El escenario del recorrido: es esto lo que se clava, no la sección
+		     entera. Así el titular queda en pantalla durante todo el proceso y
+		     la fase 01 no se va debajo del header — el puente ya se ha ido
+		     desplazando antes de que empiece. pt-24 deja sitio al header. -->
+		<div data-escenario class="flex min-h-svh flex-col justify-center pt-24 pb-8">
+			<div data-revela class="mb-10">
+				<h2 class="font-display text-4xl font-normal tracking-[-0.015em] text-hueso lg:text-6xl">
+					El proceso indie
+				</h2>
+			</div>
 
-		<div class="relative">
+			<div class="relative">
 			<!-- El hilo vive debajo del texto (el <ol> es positioned y va después
 			     en el DOM). Va por puntadas: sale por debajo de cada ordinal y
 			     entra al siguiente por su flanco izquierdo — la zona que la
@@ -72,7 +75,7 @@ const ESCALONES = ['', 'lg:ml-[17%]', 'lg:ml-[34%]', 'lg:ml-[51%]'];
 				<circle data-aguja r="3"></circle>
 			</svg>
 
-			<ol class="relative flex flex-col gap-14 lg:gap-10">
+				<ol class="relative flex flex-col gap-14 lg:gap-8">
 				{
 					fases.map((fase, i) => (
 						<li class:list={['fase flex items-baseline gap-5 lg:gap-8', ESCALONES[i]]}>
@@ -83,18 +86,22 @@ const ESCALONES = ['', 'lg:ml-[17%]', 'lg:ml-[34%]', 'lg:ml-[51%]'];
 							>
 								0{i + 1}
 							</span>
-							<div data-cuerpo class="max-w-[34ch]">
+							{/* La medida va sobre el párrafo, no sobre el contenedor: en el
+							    contenedor los `ch` se resolverían contra los 16px heredados
+							    y el titular de la fase quedaría partido en dos líneas. */}
+							<div data-cuerpo class="lg:max-w-108">
 								<h3 class="font-display text-2xl font-normal tracking-[-0.01em] text-hueso lg:text-3xl">
 									{fase.nombre}
 								</h3>
-								<p class="mt-3 text-base leading-relaxed text-seda lg:text-lg">
+								<p class="mt-3 max-w-[34ch] text-base leading-relaxed text-seda lg:text-lg">
 									{fase.descripcion}
 								</p>
 							</div>
 						</li>
 					))
-				}
-			</ol>
+					}
+				</ol>
+			</div>
 		</div>
 	</div>
 </section>
@@ -127,6 +134,7 @@ const ESCALONES = ['', 'lg:ml-[17%]', 'lg:ml-[34%]', 'lg:ml-[51%]'];
 
 	// —— El recorrido del proceso ——
 	const seccion = document.getElementById('proceso');
+	const escenario = seccion?.querySelector<HTMLElement>('[data-escenario]');
 	const lista = seccion?.querySelector<HTMLElement>('ol');
 	const trazo = seccion?.querySelector<SVGPathElement>('[data-hilo-trazo]');
 	const aguja = seccion?.querySelector<SVGCircleElement>('[data-aguja]');
@@ -216,11 +224,11 @@ const ESCALONES = ['', 'lg:ml-[17%]', 'lg:ml-[34%]', 'lg:ml-[51%]'];
 		});
 	};
 
-	// Escritorio: la sección se clava cuando termina de entrar y el scroll
+	// Escritorio: el escenario se clava al llenar la pantalla y el scroll
 	// recorre el proceso — una fase por paso, el hilo cosiéndose entre ellas,
 	// lo ya recorrido queda encendido. Aguante final antes de soltar.
 	mm.add('(pointer: fine) and (prefers-reduced-motion: no-preference)', () => {
-		if (!seccion || !trazo || fases.length < 2) return;
+		if (!escenario || !trazo || fases.length < 2) return;
 
 		apagar();
 		let largo = trazarHilo();
@@ -233,8 +241,8 @@ const ESCALONES = ['', 'lg:ml-[17%]', 'lg:ml-[34%]', 'lg:ml-[51%]'];
 
 		const tl = gsap.timeline({
 			scrollTrigger: {
-				trigger: seccion,
-				start: 'bottom bottom',
+				trigger: escenario,
+				start: 'top top',
 				end: () => `+=${window.innerHeight * 2.2}`,
 				pin: true,
 				scrub: true,
