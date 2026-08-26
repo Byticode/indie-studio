@@ -137,10 +137,11 @@ import Footer from '../components/Footer.astro';
 		// sale gratis: una sección más alta que la ventana se recorre entera
 		// con scroll nativo antes de clavarse.
 		//
-		// Fuera de la lista: The Work (ya se clava a sí misma para la galería
-		// horizontal; dos pins sobre el mismo elemento entran en conflicto) y
-		// Contacto (panel final — desvanecer el formulario mientras se rellena
-		// lo inutilizaría, y tras él no queda recorrido para completar el fundido).
+		// Fuera de la lista: The Work y Metodología (tienen pin propio — galería
+		// horizontal y recorrido del proceso — y dos pins sobre el mismo elemento
+		// entran en conflicto) y Contacto (panel final — desvanecer el formulario
+		// mientras se rellena lo inutilizaría, y tras él no queda recorrido para
+		// completar el fundido).
 		gsap.utils.toArray<HTMLElement>('[data-panel]').forEach((panel) => {
 			const margen = () => parseFloat(getComputedStyle(panel).marginBottom);
 			const colchon = margen() / window.innerHeight;

@@ -2,6 +2,17 @@
 // §07 Metodología — el proceso indie en cuatro fases. La numeración aquí es
 // real: responde «¿qué pasa después de que firme?».
 // La declaración-puente en serif hace de bisagra entre la prueba y el proceso.
+//
+// Escalera tipográfica: sin tarjetas — cada fase es un ordinal gigante en
+// serif con su nombre y descripción al lado, y los pasos bajan en diagonal
+// (la asimetría que firma la sección). El scroll recorre el proceso: cada
+// ordinal se llena de luz por turno y un hilo dibujado a mano se cose de
+// número en número, con un punto de luz viajando en su punta. En escritorio
+// la sección se clava paso a paso; en táctil, mismo relato sobre scroll
+// nativo, sin pin.
+//
+// Por eso NO lleva data-panel: tiene pin propio, y dos pins sobre la misma
+// sección entran en conflicto (mismo motivo que The Work).
 const fases = [
 	{
 		nombre: 'Auditoría & Descubrimiento',
@@ -20,9 +31,15 @@ const fases = [
 		descripcion: 'Medición de datos para escalar los resultados.',
 	},
 ];
+
+// La escalera: cada paso entra más a la derecha que el anterior (solo en
+// pantallas anchas; en columna la diagonal no cabe y no aporta).
+const ESCALONES = ['', 'lg:ml-[17%]', 'lg:ml-[34%]', 'lg:ml-[51%]'];
 ---
 
-<section id="proceso" data-panel class="bg-noche py-seccion">
+<!-- pb corto a propósito: clavada a 'bottom bottom', todo el aire que sobre
+     abajo empuja la fase 01 bajo el header. -->
+<section id="proceso" class="bg-noche pt-seccion pb-20">
 	<div class="mx-auto max-w-[110rem] px-6 lg:px-10">
 		<!-- Sin data-revela: su entrada es la propia deriva de parallax, y el
 		     reveal genérico animaría el mismo transform y entrarían en conflicto. -->
@@ -34,27 +51,51 @@ const fases = [
 			La creatividad sin estrategia es <span class="trazo-bajo">decoración</span>.
 		</p>
 
-		<div data-revela class="mb-14">
+		<div data-revela class="mb-12">
 			<h2 class="font-display text-4xl font-normal tracking-[-0.015em] text-hueso lg:text-6xl">
 				El proceso indie
 			</h2>
 		</div>
 
-		<ol class="grid gap-4 md:grid-cols-2 xl:grid-cols-4 lg:gap-5">
-			{
-				fases.map((fase, i) => (
-					<li class="fase flex min-h-56 flex-col justify-between rounded-3xl bg-carbon/55 p-7">
-						<span class="font-mono text-sm text-seda tabular-nums">0{i + 1}</span>
-						<div>
-							<h3 class="font-sans text-lg font-medium tracking-[-0.01em] text-hueso">
-								{fase.nombre}
-							</h3>
-							<p class="mt-3 text-base leading-relaxed text-seda">{fase.descripcion}</p>
-						</div>
-					</li>
-				))
-			}
-		</ol>
+		<div class="relative">
+			<!-- El hilo vive debajo del texto (el <ol> es positioned y va después
+			     en el DOM). Va por puntadas: sale por debajo de cada ordinal y
+			     entra al siguiente por su flanco izquierdo — la zona que la
+			     propia escalera deja vacía. El trazado lo calcula el script;
+			     sin JS o con movimiento reducido no hay path y no existe. -->
+			<svg
+				data-hilo
+				class="pointer-events-none absolute inset-0 h-full w-full overflow-visible"
+				aria-hidden="true"
+			>
+				<path data-hilo-trazo fill="none" stroke-linecap="round"></path>
+				<circle data-aguja r="3"></circle>
+			</svg>
+
+			<ol class="relative flex flex-col gap-14 lg:gap-10">
+				{
+					fases.map((fase, i) => (
+						<li class:list={['fase flex items-baseline gap-5 lg:gap-8', ESCALONES[i]]}>
+							<span
+								data-ordinal
+								class="font-display font-normal leading-none text-seda-dim tabular-nums"
+								style="font-size: clamp(3.5rem, 6.5vw, 6.5rem); letter-spacing: -0.02em;"
+							>
+								0{i + 1}
+							</span>
+							<div data-cuerpo class="max-w-[34ch]">
+								<h3 class="font-display text-2xl font-normal tracking-[-0.01em] text-hueso lg:text-3xl">
+									{fase.nombre}
+								</h3>
+								<p class="mt-3 text-base leading-relaxed text-seda lg:text-lg">
+									{fase.descripcion}
+								</p>
+							</div>
+						</li>
+					))
+				}
+			</ol>
+		</div>
 	</div>
 </section>
 
@@ -64,7 +105,9 @@ const fases = [
 
 	gsap.registerPlugin(ScrollTrigger);
 
-	gsap.matchMedia().add('(prefers-reduced-motion: no-preference)', () => {
+	const mm = gsap.matchMedia();
+
+	mm.add('(prefers-reduced-motion: no-preference)', () => {
 		// La declaración-puente deriva contra el scroll mientras cruza el
 		// viewport: flota respecto al resto de la página, como pieza tipográfica
 		// suelta. Recorrido corto y lineal — profundidad, no efecto.
@@ -80,36 +123,201 @@ const fases = [
 				},
 			);
 		}
+	});
 
-		// Las cuatro fases entran en secuencia: la numeración es real y el
-		// orden de aparición la subraya.
-		gsap.fromTo(
-			'#proceso .fase',
-			{ opacity: 0, y: 28 },
+	// —— El recorrido del proceso ——
+	const seccion = document.getElementById('proceso');
+	const lista = seccion?.querySelector<HTMLElement>('ol');
+	const trazo = seccion?.querySelector<SVGPathElement>('[data-hilo-trazo]');
+	const aguja = seccion?.querySelector<SVGCircleElement>('[data-aguja]');
+	const fases = Array.from(seccion?.querySelectorAll<HTMLElement>('.fase') ?? []);
+
+	const estilo = getComputedStyle(document.documentElement);
+	const HUESO = estilo.getPropertyValue('--color-hueso').trim() || '#edeae3';
+	const SEDA_DIM = estilo.getPropertyValue('--color-seda-dim').trim() || '#87847c';
+
+	// Cose el hilo por puntadas: cada tramo sale por debajo de un ordinal y
+	// entra al siguiente. En diagonal (escalera de escritorio) baja primero y
+	// luego gira hacia el número — la curva pasa por el hueco que deja la
+	// sangría, nunca sobre el texto. En columna (móvil) es una puntada
+	// vertical con ondulación alterna. Devuelve la longitud total del path.
+	const trazarHilo = () => {
+		if (!lista || !trazo || fases.length < 2) return 0;
+		const caja = lista.getBoundingClientRect();
+		const marcas = fases.map((fase) => {
+			const r = fase.querySelector('[data-ordinal]')!.getBoundingClientRect();
+			return {
+				cx: r.left - caja.left + r.width / 2,
+				cy: r.top - caja.top + r.height / 2,
+				left: r.left - caja.left,
+				top: r.top - caja.top,
+				bottom: r.bottom - caja.top,
+			};
+		});
+
+		let d = '';
+		for (let i = 1; i < marcas.length; i++) {
+			const a = marcas[i - 1];
+			const b = marcas[i];
+			const salida = { x: a.cx, y: a.bottom + 12 };
+
+			if (Math.abs(b.cx - a.cx) > 60) {
+				// Escalera: baja desde el ordinal y entra al siguiente por la
+				// izquierda; el control en la esquina hace el giro dibujado.
+				const entrada = { x: b.left - 16, y: b.cy };
+				d += ` M ${salida.x} ${salida.y} Q ${salida.x} ${entrada.y} ${entrada.x} ${entrada.y}`;
+			} else {
+				// Columna: puntada vertical con onda alterna.
+				const entrada = { x: b.cx, y: b.top - 12 };
+				const onda = 18 * (i % 2 ? 1 : -1);
+				d += ` M ${salida.x} ${salida.y} Q ${salida.x + onda} ${(salida.y + entrada.y) / 2} ${entrada.x} ${entrada.y}`;
+			}
+		}
+
+		trazo.setAttribute('d', d.trim());
+		const largo = trazo.getTotalLength();
+		trazo.style.strokeDasharray = String(largo);
+		return largo;
+	};
+
+	// Estado de reposo: los ordinales esperan apagados y el cuerpo en voz
+	// baja. Solo con el efecto activo — en movimiento reducido o sin JS la
+	// escalera queda como la pinta el CSS.
+	const apagar = () => {
+		fases.forEach((fase) => {
+			gsap.set(fase.querySelector('[data-ordinal]'), { color: SEDA_DIM, opacity: 0.3 });
+			gsap.set(fase.querySelector('[data-cuerpo]'), { opacity: 0.35 });
+		});
+		if (aguja) gsap.set(aguja, { autoAlpha: 0 });
+	};
+
+	// El ordinal se llena de luz y el cuerpo sube a plena voz.
+	const encendido = (fase: HTMLElement) => {
+		const tramo = gsap.timeline();
+		tramo
+			.to(
+				fase.querySelector('[data-ordinal]'),
+				{ color: HUESO, opacity: 1, duration: 0.4, ease: 'power2.out' },
+				0,
+			)
+			.to(fase.querySelector('[data-cuerpo]'), { opacity: 1, duration: 0.4, ease: 'power2.out' }, 0);
+		return tramo;
+	};
+
+	// La aguja: un punto de luz en la punta del hilo mientras se cose.
+	const moverAguja = (largo: number) => {
+		if (!trazo || !aguja || largo === 0) return;
+		const offset = parseFloat(String(gsap.getProperty(trazo, 'strokeDashoffset'))) || 0;
+		const avanzado = gsap.utils.clamp(0, largo, largo - offset);
+		const punta = trazo.getPointAtLength(avanzado);
+		gsap.set(aguja, {
+			attr: { cx: punta.x, cy: punta.y },
+			autoAlpha: avanzado > 4 && avanzado < largo - 4 ? 1 : 0,
+		});
+	};
+
+	// Escritorio: la sección se clava cuando termina de entrar y el scroll
+	// recorre el proceso — una fase por paso, el hilo cosiéndose entre ellas,
+	// lo ya recorrido queda encendido. Aguante final antes de soltar.
+	mm.add('(pointer: fine) and (prefers-reduced-motion: no-preference)', () => {
+		if (!seccion || !trazo || fases.length < 2) return;
+
+		apagar();
+		let largo = trazarHilo();
+		gsap.set(trazo, { strokeDashoffset: largo });
+
+		const alRefrescar = () => {
+			largo = trazarHilo();
+		};
+		ScrollTrigger.addEventListener('refreshInit', alRefrescar);
+
+		const tl = gsap.timeline({
+			scrollTrigger: {
+				trigger: seccion,
+				start: 'bottom bottom',
+				end: () => `+=${window.innerHeight * 2.2}`,
+				pin: true,
+				scrub: true,
+				invalidateOnRefresh: true,
+			},
+		});
+
+		fases.forEach((fase, i) => {
+			tl.add(encendido(fase), i);
+		});
+		tl.fromTo(
+			trazo,
+			{ strokeDashoffset: () => largo },
 			{
-				opacity: 1,
-				y: 0,
-				duration: 0.8,
-				ease: 'power3.out',
-				stagger: 0.1,
-				scrollTrigger: { trigger: '#proceso ol', start: 'top 80%', once: true },
+				strokeDashoffset: 0,
+				duration: fases.length - 1,
+				ease: 'none',
+				onUpdate: () => moverAguja(largo),
+			},
+			0.4,
+		);
+		tl.to({}, { duration: 0.7 });
+
+		return () => ScrollTrigger.removeEventListener('refreshInit', alRefrescar);
+	});
+
+	// Táctil: mismo relato sobre scroll nativo, sin pin. El hilo se cose al
+	// avance de la lista y cada fase se enciende al cruzar el umbral.
+	mm.add('(pointer: coarse) and (prefers-reduced-motion: no-preference)', () => {
+		if (!seccion || !trazo || !lista || fases.length < 2) return;
+
+		apagar();
+		let largo = trazarHilo();
+		gsap.set(trazo, { strokeDashoffset: largo });
+
+		const alRefrescar = () => {
+			largo = trazarHilo();
+		};
+		ScrollTrigger.addEventListener('refreshInit', alRefrescar);
+
+		gsap.fromTo(
+			trazo,
+			{ strokeDashoffset: () => largo },
+			{
+				strokeDashoffset: 0,
+				ease: 'none',
+				onUpdate: () => moverAguja(largo),
+				scrollTrigger: {
+					trigger: lista,
+					start: 'top 75%',
+					end: 'bottom 55%',
+					scrub: true,
+					invalidateOnRefresh: true,
+				},
 			},
 		);
+
+		fases.forEach((fase) => {
+			ScrollTrigger.create({
+				trigger: fase,
+				start: 'top 70%',
+				once: true,
+				onEnter: () => {
+					encendido(fase).duration(0.7);
+				},
+			});
+		});
+
+		return () => ScrollTrigger.removeEventListener('refreshInit', alRefrescar);
 	});
 </script>
 
 <style>
-	/* Elevación por luz, no por sombra: en fondo oscuro la fase activa
-	   se distingue aclarando su superficie un punto. */
-	.fase {
-		transition: background-color 400ms ease;
+	/* El hilo del recorrido: trazo en seda con más presencia que un filete,
+	   pero por debajo de la tipografía. El dibujo lo gobierna el script. */
+	[data-hilo-trazo] {
+		stroke: var(--color-seda);
+		stroke-width: 2;
+		opacity: 0.6;
 	}
-	.fase:hover {
-		background-color: var(--color-carbon);
-	}
-	@media (prefers-reduced-motion: reduce) {
-		.fase {
-			transition: none;
-		}
+
+	/* La aguja: la punta de luz del hilo. */
+	[data-aguja] {
+		fill: var(--color-hueso);
 	}
 </style>

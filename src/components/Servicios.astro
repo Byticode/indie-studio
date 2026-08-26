@@ -1,21 +1,32 @@
 ---
+import Icono from './Icono.astro';
+
 // §05 Ecosistema de Servicios — tres áreas leídas como tabla, no como
-// tres tarjetas iguales. La columna de resultado lleva el peso.
+// tres tarjetas iguales. La columna de resultado lleva el peso: es el
+// argumento de venta, así que va en serif y en hueso; el área es la
+// etiqueta de entrada y los componentes van como píldoras del sistema.
+//
+// `desafio` debe coincidir letra a letra con las opciones del select del
+// formulario de Contacto: el clic en la fila aterriza en el formulario
+// con ese desafío ya elegido.
 const servicios = [
 	{
 		area: 'Branding Editorial',
-		componentes: 'Identidad visual · Brandbook · Naming',
+		componentes: ['Identidad visual', 'Brandbook', 'Naming'],
 		resultado: 'Posicionamiento premium y diferenciación visual.',
+		desafio: 'Mi marca no refleja lo que realmente somos',
 	},
 	{
 		area: 'Marketing Estratégico',
-		componentes: 'Pauta digital (Ads) · Embudos de venta',
+		componentes: ['Pauta digital (Ads)', 'Embudos de venta'],
 		resultado: 'Escalabilidad y conversión medible.',
+		desafio: 'Tengo tráfico, pero no convierte',
 	},
 	{
 		area: 'Dirección de Arte',
-		componentes: 'Producción audiovisual · Fotografía',
+		componentes: ['Producción audiovisual', 'Fotografía'],
 		resultado: 'Contenido que retiene la atención del usuario.',
+		desafio: 'Necesito contenido que sostenga la atención',
 	},
 ];
 ---
@@ -31,21 +42,42 @@ const servicios = [
 		<div role="list">
 			{
 				servicios.map((servicio, i) => (
-					<div
+					<a
 						role="listitem"
-						class="servicio -mx-5 grid gap-3 rounded-3xl px-5 py-9 md:grid-cols-[2rem_1fr_1fr_1.2fr] md:items-baseline md:gap-8"
+						href="#contacto"
+						data-desafio={servicio.desafio}
+						class="servicio group -mx-5 grid gap-4 rounded-3xl px-5 py-9 md:grid-cols-[3.5rem_minmax(0,1fr)_minmax(0,1.3fr)] md:items-baseline md:gap-8"
 					>
-						<span class="font-mono text-[0.8rem] font-medium text-seda-dim tabular-nums">
+						<span class="font-mono text-lg font-medium text-seda-dim tabular-nums">
 							0{i + 1}
 						</span>
-						<h3 class="font-display text-2xl font-normal tracking-[-0.01em] text-hueso lg:text-3xl">
-							{servicio.area}
-						</h3>
-						<p class="etiqueta leading-relaxed">{servicio.componentes}</p>
-						<p class="text-base leading-relaxed text-seda lg:text-lg">
+
+						<div>
+							<h3 class="font-sans text-lg font-medium tracking-[-0.01em] text-hueso lg:text-xl">
+								{servicio.area}
+							</h3>
+							{/* Píldoras: el lenguaje de divisores de la casa. Cada componente
+							    envuelve entero — nada de versalitas partidas a media palabra. */}
+							<ul class="mt-4 flex flex-wrap gap-2" aria-label={`Componentes de ${servicio.area}`}>
+								{servicio.componentes.map((componente) => (
+									<li class="rounded-full bg-seda/12 px-4 py-1.5 font-mono text-[0.7rem] font-medium tracking-[0.12em] whitespace-nowrap text-seda uppercase">
+										{componente}
+									</li>
+								))}
+							</ul>
+						</div>
+
+						<p
+							class="font-display text-2xl leading-snug font-normal text-hueso lg:text-3xl"
+							style="text-wrap: balance;"
+						>
 							{servicio.resultado}
+							<Icono
+								nombre="flecha-arriba-derecha"
+								clase="ml-2 text-[0.7em] text-seda transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+							/>
 						</p>
-					</div>
+					</a>
 				))
 			}
 		</div>
@@ -54,28 +86,26 @@ const servicios = [
 
 <style>
 	/* Elevación por luz, no por filete: la fila señalada aclara su superficie
-	   un punto, como las fases del proceso. */
+	   un punto, como las fases del proceso. Un solo gesto de hover — la
+	   superficie — más el empuje de la flecha; el resto queda quieto. */
 	.servicio {
-		transition: background-color 400ms ease;
+		transition: background-color 400ms cubic-bezier(0.16, 1, 0.3, 1);
 	}
 	.servicio:hover {
 		background-color: var(--color-carbon);
 	}
-
-	/* La fila responde al cursor: el área se desliza un punto hacia la
-	   derecha, como una entrada de índice que se señala con el dedo. */
-	.servicio h3 {
-		transition: transform 500ms cubic-bezier(0.16, 1, 0.3, 1);
-	}
-	.servicio:hover h3 {
-		transform: translateX(0.4rem);
-	}
-	@media (prefers-reduced-motion: reduce) {
-		.servicio h3 {
-			transition: none;
-		}
-		.servicio:hover h3 {
-			transform: none;
-		}
-	}
 </style>
+
+<script>
+	// El clic en un servicio no solo navega al contacto: preselecciona el
+	// desafío equivalente en el formulario — la fila cualifica.
+	document.querySelectorAll<HTMLAnchorElement>('[data-desafio]').forEach((enlace) => {
+		enlace.addEventListener('click', () => {
+			const selector = document.querySelector<HTMLSelectElement>(
+				'#contacto select[name="desafio"]',
+			);
+			if (!selector || !enlace.dataset.desafio) return;
+			selector.value = enlace.dataset.desafio;
+		});
+	});
+</script>
