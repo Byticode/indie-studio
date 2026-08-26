@@ -42,7 +42,7 @@ const casos = [
 <section id="trabajo" class="overflow-hidden bg-noche">
 	<div class="flex min-h-svh flex-col justify-center gap-12 py-20">
 		<div class="mx-auto w-full max-w-[110rem] px-6 lg:px-10">
-			<div data-revela class="flex items-baseline justify-between border-b border-seda/15 pb-6">
+			<div data-revela class="flex items-baseline justify-between">
 				<h2 class="font-display text-4xl font-normal tracking-[-0.015em] text-hueso lg:text-6xl">
 					The Work
 				</h2>
@@ -64,7 +64,7 @@ const casos = [
 								    recorrido del parallax horizontal dentro del recorte. */}
 								<div
 									class:list={[
-										'caso-visual relative h-[38vh] w-auto overflow-hidden sm:h-[42vh] lg:h-[48vh]',
+										'caso-visual bg-[url("https://images.pexels.com/photos/39144146/pexels-photo-39144146.jpeg")] relative h-[38vh] w-auto overflow-hidden rounded-3xl sm:h-[42vh] lg:h-[48vh]',
 										i === 0 ? 'aspect-[16/10]' : 'aspect-[4/3]',
 									]}
 								>
@@ -90,7 +90,7 @@ const casos = [
 											{caso.nombre}
 											<Icono
 												nombre="flecha-arriba-derecha"
-												clase="h-5 w-5 -translate-x-1 text-seda opacity-0 transition-[opacity,transform] duration-300 group-hover:translate-x-0 group-hover:opacity-100"
+												clase="text-xl -translate-x-1 text-seda opacity-0 transition-[opacity,transform] duration-300 group-hover:translate-x-0 group-hover:opacity-100"
 											/>
 										</h3>
 										<p class="etiqueta mt-2">{caso.categoria}</p>
@@ -127,12 +127,12 @@ const casos = [
 						<a
 							href="#contacto"
 							data-magnetico
-							class="group inline-flex items-center gap-3 bg-hueso px-7 py-4 font-mono text-[0.8rem] font-medium tracking-[0.14em] text-noche uppercase transition-colors duration-300 hover:bg-seda"
+							class="group inline-flex items-center gap-3 rounded-full bg-hueso px-8 py-4 font-mono text-[0.8rem] font-medium tracking-[0.14em] text-noche uppercase transition-colors duration-300 hover:bg-seda"
 						>
 							Iniciar proyecto
 							<Icono
 								nombre="flecha-arriba-derecha"
-								clase="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+								clase="text-sm transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
 							/>
 						</a>
 					</div>

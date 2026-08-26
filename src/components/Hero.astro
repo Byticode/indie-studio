@@ -75,12 +75,8 @@ const totalDiapos = String(imagenes.length).padStart(2, '0');
 		<!-- Oscurecido base: el copy tiene que aguantar sobre cualquier fotograma -->
 		<div class="absolute inset-0 bg-noche/60"></div>
 
-		<!-- Retícula editorial en Gris Sedoso, atenuada en cabecera y pie -->
-		<div
-			class="reticula absolute inset-0"
-			style="mask-image: linear-gradient(180deg, transparent 0%, #000 22%, #000 68%, transparent 100%);"
-		>
-		</div>
+		<!-- Halos de luz en Gris Sedoso: se desvanecen solos, sin necesidad de máscara -->
+		<div class="halo absolute inset-0"></div>
 
 		<!-- Refuerzo superior: la navegación es transparente sobre el hero
 		     y tiene que aguantar sobre fotogramas con cielos o zonas claras -->
@@ -123,7 +119,7 @@ const totalDiapos = String(imagenes.length).padStart(2, '0');
 			}
 		</h1>
 
-		<div class="mt-12 grid gap-10 border-t border-seda/15 pt-9 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] lg:gap-24">
+		<div class="mt-16 grid gap-10 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] lg:gap-24">
 			<div class="flex flex-col justify-between gap-10">
 				<p data-anim class="max-w-[38ch] text-lg leading-snug text-seda lg:text-xl">
 					{SUBTITULAR}
@@ -133,18 +129,18 @@ const totalDiapos = String(imagenes.length).padStart(2, '0');
 					<a
 						href="#contacto"
 						data-magnetico
-						class="group inline-flex items-center gap-3 bg-hueso px-7 py-4 font-mono text-[0.8rem] font-medium tracking-[0.14em] text-noche uppercase transition-colors duration-300 hover:bg-seda"
+						class="group inline-flex items-center gap-3 rounded-full bg-hueso px-8 py-4 font-mono text-[0.8rem] font-medium tracking-[0.14em] text-noche uppercase transition-colors duration-300 hover:bg-seda"
 					>
 						Iniciar proyecto
 						<Icono
 							nombre="flecha-arriba-derecha"
-							clase="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+							clase="text-sm transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
 						/>
 					</a>
 					<a
 						href="#trabajo"
 						data-magnetico
-						class="inline-flex items-center gap-3 border border-seda/35 px-7 py-4 font-mono text-[0.8rem] font-medium tracking-[0.14em] text-hueso uppercase transition-colors duration-300 hover:border-seda hover:bg-seda/10"
+						class="inline-flex items-center gap-3 rounded-full bg-seda/12 px-8 py-4 font-mono text-[0.8rem] font-medium tracking-[0.14em] text-hueso uppercase transition-colors duration-300 hover:bg-seda/25"
 					>
 						Ver el trabajo
 					</a>
@@ -158,10 +154,7 @@ const totalDiapos = String(imagenes.length).padStart(2, '0');
 					DISCIPLINAS.map((disciplina, i) => (
 						<li
 							data-anim
-							class:list={[
-								'flex items-baseline gap-6 py-3.5 lg:py-4',
-								i > 0 && 'border-t border-seda/12',
-							]}
+							class="flex items-baseline gap-6 py-3.5 lg:py-4"
 						>
 							<span class="font-mono text-[0.8rem] font-medium text-seda-dim tabular-nums">
 								0{i + 1}
@@ -177,11 +170,11 @@ const totalDiapos = String(imagenes.length).padStart(2, '0');
 	</div>
 
 	<div
-		class="relative z-10 mx-auto flex w-full max-w-[110rem] items-center justify-between border-t border-seda/10 px-6 py-5 lg:px-10"
+		class="relative z-10 mx-auto flex w-full max-w-[110rem] items-center justify-between px-6 py-5 lg:px-10"
 	>
 		<span class="etiqueta inline-flex items-center gap-2">
 			Scroll
-			<Icono nombre="flecha-abajo" clase="flecha-scroll h-3.5 w-3.5" />
+			<Icono nombre="flecha-abajo" clase="flecha-scroll text-sm" />
 		</span>
 		<!-- Contador real del carrusel: lo actualiza el mismo script del fundido -->
 		<span class="etiqueta tabular-nums">

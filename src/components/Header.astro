@@ -14,7 +14,7 @@ const enlaces = [
 <header
 	id="cabecera"
 	data-pegada="false"
-	class="fixed inset-x-0 top-0 z-50 border-b border-transparent transition-[background-color,border-color,backdrop-filter] duration-500 data-[pegada=true]:border-seda/15 data-[pegada=true]:bg-noche/80 data-[pegada=true]:backdrop-blur-md"
+	class="fixed inset-x-0 top-0 z-50 transition-[background-color,backdrop-filter] duration-500 data-[pegada=true]:bg-noche/80 data-[pegada=true]:backdrop-blur-md"
 >
 	<nav
 		aria-label="Navegación principal"
@@ -45,7 +45,7 @@ const enlaces = [
 		<div class="flex items-center gap-4">
 			<a
 				href="#contacto"
-				class="hidden border border-seda/40 px-5 py-2.5 font-mono text-[0.8rem] font-medium tracking-[0.14em] text-hueso uppercase transition-colors duration-300 hover:bg-hueso hover:text-noche md:inline-block"
+				class="hidden rounded-full bg-seda/12 px-6 py-2.5 font-mono text-[0.8rem] font-medium tracking-[0.14em] text-hueso uppercase transition-colors duration-300 hover:bg-hueso hover:text-noche md:inline-block"
 			>
 				Iniciar proyecto
 			</a>
@@ -58,8 +58,8 @@ const enlaces = [
 				class="etiqueta inline-flex items-center gap-2.5 text-hueso md:hidden"
 			>
 				<span data-menu-texto>Menú</span>
-				<Icono nombre="menu" clase="icono-menu h-5 w-5" />
-				<Icono nombre="cerrar" clase="icono-cerrar hidden h-5 w-5" />
+				<Icono nombre="menu" clase="icono-menu text-xl" />
+				<Icono nombre="cerrar" clase="icono-cerrar hidden text-xl" />
 			</button>
 		</div>
 	</nav>
@@ -89,7 +89,7 @@ const enlaces = [
 	<a
 		href="#contacto"
 		data-cierra-menu
-		class="block border border-seda/40 py-4 text-center font-mono text-[0.85rem] font-medium tracking-[0.14em] text-hueso uppercase"
+		class="block rounded-full bg-hueso py-4 text-center font-mono text-[0.85rem] font-medium tracking-[0.14em] text-noche uppercase"
 	>
 		Iniciar proyecto
 	</a>

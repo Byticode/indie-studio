@@ -8,13 +8,13 @@ const año = new Date().getFullYear();
 
 <footer class="bg-hueso text-tinta">
 	<div class="mx-auto max-w-[110rem] px-6 pt-20 pb-10 lg:px-10">
-		<div class="flex flex-col gap-14 border-b border-tinta/15 pb-14 lg:flex-row lg:items-end lg:justify-between">
+		<div class="flex flex-col gap-14 pb-16 lg:flex-row lg:items-end lg:justify-between">
 			<p class="font-display text-5xl font-medium tracking-[-0.02em] lg:text-7xl">
 				indie<span class="text-tinta/45"> studio</span>
 			</p>
 			<div class="flex flex-col gap-2 lg:text-right">
 				<!-- PENDIENTE: correo y ciudad reales del estudio -->
-				<a href="mailto:hola@indiestudio.com" class="text-xl underline-offset-4 hover:underline">
+				<a href="mailto:hola@indiestudio.com" class="text-xl transition-colors duration-300 hover:text-tinta/60">
 					hola@indiestudio.com
 				</a>
 				<span class="etiqueta text-tinta/60">Ciudad · Disponibles en remoto</span>
@@ -30,7 +30,7 @@ const año = new Date().getFullYear();
 						target="_blank"
 						class="etiqueta inline-flex items-center gap-2 text-tinta/70 transition-colors hover:text-tinta"
 					>
-						<Icono nombre="instagram" clase="h-4 w-4" />
+						<Icono nombre="instagram" clase="text-base" />
 						Instagram
 					</a>
 				</li>
@@ -41,7 +41,7 @@ const año = new Date().getFullYear();
 						target="_blank"
 						class="etiqueta inline-flex items-center gap-2 text-tinta/70 transition-colors hover:text-tinta"
 					>
-						<Icono nombre="linkedin" clase="h-4 w-4" />
+						<Icono nombre="linkedin" clase="text-base" />
 						LinkedIn
 					</a>
 				</li>
@@ -57,7 +57,7 @@ const año = new Date().getFullYear();
 				href="#inicio"
 				class="etiqueta inline-flex items-center gap-2 text-tinta/70 transition-colors hover:text-tinta"
 			>
-				<Icono nombre="flecha-arriba" clase="h-4 w-4" />
+				<Icono nombre="flecha-arriba" clase="text-base" />
 				Volver arriba
 			</a>
 		</div>

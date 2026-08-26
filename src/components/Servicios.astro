@@ -22,7 +22,7 @@ const servicios = [
 
 <section id="servicios" class="bg-noche py-seccion">
 	<div class="mx-auto max-w-[110rem] px-6 lg:px-10">
-		<div data-revela class="mb-4 border-b border-seda/15 pb-6">
+		<div data-revela class="mb-10">
 			<h2 class="font-display text-4xl font-normal tracking-[-0.015em] text-hueso lg:text-6xl">
 				Servicios
 			</h2>
@@ -33,7 +33,7 @@ const servicios = [
 				servicios.map((servicio, i) => (
 					<div
 						role="listitem"
-						class="servicio grid gap-3 border-b border-seda/10 py-9 md:grid-cols-[2rem_1fr_1fr_1.2fr] md:items-baseline md:gap-8"
+						class="servicio -mx-5 grid gap-3 rounded-3xl px-5 py-9 md:grid-cols-[2rem_1fr_1fr_1.2fr] md:items-baseline md:gap-8"
 					>
 						<span class="font-mono text-[0.8rem] font-medium text-seda-dim tabular-nums">
 							0{i + 1}
@@ -53,11 +53,13 @@ const servicios = [
 </section>
 
 <style>
+	/* Elevación por luz, no por filete: la fila señalada aclara su superficie
+	   un punto, como las fases del proceso. */
 	.servicio {
-		transition: border-color 400ms ease;
+		transition: background-color 400ms ease;
 	}
 	.servicio:hover {
-		border-color: color-mix(in srgb, var(--color-seda) 40%, transparent);
+		background-color: var(--color-carbon);
 	}
 
 	/* La fila responde al cursor: el área se desliza un punto hacia la
