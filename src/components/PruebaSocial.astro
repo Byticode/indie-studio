@@ -1,0 +1,92 @@
+---
+// §06 Colaboraciones y Prueba Social — tres capas: logos, prensa, voz del cliente.
+//
+// CONTENIDO PLACEHOLDER: sustituir por las marcas y citas reales.
+// Criterio de la arquitectura: con menos de 6 marcas reales, fila estática
+// en lugar de marquee; sin prensa, el bloque «Visto en» se omite entero.
+const marcas = [
+	'CASSIA',
+	'VERMÚ NORTE',
+	'ATLAS',
+	'HOTEL DUE',
+	'RÍO STUDIO',
+	'FORMA',
+	'LAB SIETE',
+	'MARGEN',
+];
+
+const testimonios = [
+	{
+		cita: 'Dejamos de competir por precio. Ahora nos eligen antes de preguntar cuánto cuesta.',
+		autor: 'Nombre Apellido',
+		cargo: 'Fundadora · Cassia',
+	},
+	{
+		cita: 'El primer lote se agotó en un día. El segundo, antes de anunciarlo.',
+		autor: 'Nombre Apellido',
+		cargo: 'CEO · Vermú Norte',
+	},
+];
+---
+
+<section id="colaboraciones" class="overflow-hidden bg-noche py-seccion">
+	<div class="mx-auto mb-14 max-w-[110rem] px-6 lg:px-10">
+		<div data-revela class="flex items-baseline justify-between border-b border-seda/15 pb-6">
+			<h2 class="font-display text-3xl font-medium tracking-[-0.02em] text-hueso lg:text-5xl">
+				Colaboraciones
+			</h2>
+			<span class="etiqueta">05 · Prueba social</span>
+		</div>
+	</div>
+
+	<!-- Cinta continua de marcas en Gris Sedoso: autoridad sin colores ajenos.
+	     El contenido va duplicado para que el bucle cierre sin costura. -->
+	<div data-revela class="marquee relative border-y border-seda/10 py-8" aria-label="Marcas con las que hemos trabajado">
+		<div class="marquee-pista flex w-max items-center gap-20 pr-20" data-marquee>
+			{
+				[...marcas, ...marcas].map((marca) => (
+					<span
+						aria-hidden="true"
+						class="font-display text-2xl font-medium tracking-[0.04em] whitespace-nowrap text-seda-dim transition-colors duration-500 hover:text-seda lg:text-3xl"
+					>
+						{marca}
+					</span>
+				))
+			}
+		</div>
+		<span class="sr-only">{marcas.join(', ')}</span>
+	</div>
+
+	<!-- Voz del cliente: citas cortas en serif grande. Priorizar las que hablan
+	     de ventas o imagen, nunca «fue un placer trabajar con ellos». -->
+	<div class="mx-auto mt-24 grid max-w-[110rem] gap-16 px-6 md:grid-cols-2 lg:gap-24 lg:px-10">
+		{
+			testimonios.map((testimonio) => (
+				<figure data-revela class="border-t border-seda/15 pt-8">
+					<blockquote>
+						<p class="font-serif text-2xl leading-snug font-light text-hueso lg:text-[2rem]">
+							«{testimonio.cita}»
+						</p>
+					</blockquote>
+					<figcaption class="etiqueta mt-6">
+						{testimonio.autor} — {testimonio.cargo}
+					</figcaption>
+				</figure>
+			))
+		}
+	</div>
+</section>
+
+<script>
+	import { animate } from 'motion';
+
+	// Marquee con motion: la pista se desplaza media longitud (una copia) y
+	// reinicia — el duplicado hace el corte invisible. En reduced motion la
+	// cinta queda estática, que era el estado de reposo previsto.
+	const pista = document.querySelector<HTMLElement>('[data-marquee]');
+	const sinMovimiento = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+	if (pista && !sinMovimiento) {
+		animate(pista, { x: ['0%', '-50%'] }, { duration: 36, ease: 'linear', repeat: Infinity });
+	}
+</script>

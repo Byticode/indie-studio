@@ -1,0 +1,34 @@
+---
+// §03 El Manifiesto — respiro visual y filtro.
+// El corte de valor con el hero (negro → hueso) es parte del mensaje.
+// Sin imagen de fondo: aquí solo trabaja la tipografía.
+//
+// Nota de medida: los `ch` van sobre el propio elemento de texto, no sobre el
+// contenedor. En el contenedor se resolverían contra los 16px heredados y la
+// columna saldría a un tercio de su ancho.
+---
+
+<section id="estudio" class="bg-hueso py-seccion text-tinta">
+	<div class="mx-auto grid max-w-[110rem] gap-12 px-6 lg:grid-cols-[10rem_minmax(0,1fr)] lg:gap-16 lg:px-10">
+		<p class="etiqueta self-start text-tinta/70 lg:sticky lg:top-28">Manifiesto</p>
+
+		<div>
+			<p
+				data-revela
+				class="max-w-[18ch] font-serif font-light"
+				style="font-size: clamp(2rem, 5.2vw, 4.25rem); line-height: 1.08; letter-spacing: -0.02em; text-wrap: balance;"
+			>
+				No creemos en el marketing que interrumpe. Creemos en marcas tan bien
+				construidas que la gente <em class="italic">se detiene sola</em>.
+			</p>
+
+			<p
+				data-revela
+				class="mt-12 max-w-[46ch] border-t border-tinta/15 pt-8 text-base leading-relaxed text-tinta/70 lg:text-lg"
+			>
+				Trabajamos con quien entiende que la estética es una decisión de negocio.
+				Con nadie más.
+			</p>
+		</div>
+	</div>
+</section>

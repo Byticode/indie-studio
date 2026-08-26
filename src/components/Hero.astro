@@ -1,0 +1,177 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+// §02 El Gancho — qué hacemos y para quién, legible en menos de 3 segundos.
+//
+// El H1 es la única pieza de copy pendiente de aprobación. Opciones sobre la mesa:
+//   1. ['Lo bonito no vende.', 'Lo inevitable sí.']          ← en uso
+//   2. ['Dirección de arte', 'que se nota en la caja.']
+//   3. ['Construimos marcas que', 'se eligen antes de compararse.']
+const SLOGAN = ['Lo bonito no vende.', 'Lo inevitable sí.'];
+
+const SUBTITULAR =
+	'Elevamos marcas a través de dirección de arte editorial y marketing de precisión.';
+
+// El carrusel se alimenta de la carpeta, no de una lista a mano: para cambiar la
+// fotografía basta con soltar los archivos en src/assets/hero/ y borrar los que
+// sobren. El orden lo marca el nombre del archivo.
+//
+// Las imágenes actuales son MARCADORES DE POSICIÓN generados por código.
+// Sustituir por fotografía arquitectónica, urbana o editorial real.
+const modulos = import.meta.glob<{ default: ImageMetadata }>(
+	'../assets/hero/*.{jpg,jpeg,png,webp,avif}',
+	{ eager: true },
+);
+const imagenes = Object.entries(modulos)
+	.sort(([a], [b]) => a.localeCompare(b))
+	.map(([, modulo]) => modulo.default);
+---
+
+<section
+	id="inicio"
+	class="grano relative flex min-h-[100svh] flex-col justify-between overflow-hidden bg-noche"
+>
+	<div aria-hidden="true" class="absolute inset-0">
+		<!--
+			Carrusel de fondo. Es atmósfera, no un componente operable: sin controles,
+			sin puntos y fuera del árbol de accesibilidad. El copy manda.
+
+			Si en su lugar se opta por vídeo, sustituir este bloque por:
+			<video class="absolute inset-0 h-full w-full object-cover"
+			       autoplay muted loop playsinline poster="/hero-poster.jpg">
+			  <source src="/hero.mp4" type="video/mp4" />
+			</video>
+			Requisitos: < 2,5 MB, póster obligatorio, y en móvil solo el póster.
+		-->
+		<div id="carrusel" class="absolute inset-0">
+			{
+				imagenes.map((imagen, i) => (
+					<Image
+						src={imagen}
+						alt=""
+						widths={[960, 1440, 1920, 2400]}
+						sizes="100vw"
+						format="webp"
+						quality={78}
+						loading={i === 0 ? 'eager' : 'lazy'}
+						fetchpriority={i === 0 ? 'high' : 'auto'}
+						data-diapo
+						data-activa={i === 0 ? 'true' : 'false'}
+						class="diapo absolute inset-0 h-full w-full object-cover"
+					/>
+				))
+			}
+		</div>
+
+		<!-- Oscurecido base: el copy tiene que aguantar sobre cualquier fotograma -->
+		<div class="absolute inset-0 bg-noche/60"></div>
+
+		<!-- Retícula editorial en Gris Sedoso, atenuada en cabecera y pie -->
+		<div
+			class="reticula absolute inset-0"
+			style="mask-image: linear-gradient(180deg, transparent 0%, #000 22%, #000 68%, transparent 100%);"
+		>
+		</div>
+
+		<!-- Refuerzo superior: la navegación es transparente sobre el hero
+		     y tiene que aguantar sobre fotogramas con cielos o zonas claras -->
+		<div
+			class="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-noche/70 to-transparent"
+		>
+		</div>
+
+		<!-- Refuerzo inferior: garantiza contraste bajo el titular y los CTA -->
+		<div
+			class="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-noche via-noche/75 to-transparent"
+		>
+		</div>
+	</div>
+
+	<div class="relative z-10 mx-auto flex w-full max-w-[110rem] flex-1 flex-col justify-end px-6 pt-32 pb-10 lg:px-10 lg:pb-14">
+		<p data-anim class="etiqueta mb-8 text-seda">Branding · Dirección de arte · Marketing</p>
+
+		<h1
+			class="font-display font-medium text-hueso"
+			style="font-size: clamp(2.75rem, 9.5vw, 9rem); line-height: 0.9; letter-spacing: -0.045em; text-wrap: balance;"
+		>
+			{
+				SLOGAN.map((linea, i) => (
+					<span data-anim class="block">
+						{i === SLOGAN.length - 1 ? <em class="font-serif font-light italic">{linea}</em> : linea}
+					</span>
+				))
+			}
+		</h1>
+
+		<div class="mt-10 flex flex-col gap-10 border-t border-seda/15 pt-8 lg:flex-row lg:items-end lg:justify-between">
+			<p data-anim class="max-w-[38ch] text-lg leading-snug text-seda lg:text-xl">
+				{SUBTITULAR}
+			</p>
+
+			<div data-anim class="flex flex-wrap items-center gap-3">
+				<a
+					href="#contacto"
+					class="bg-hueso px-7 py-4 font-mono text-[0.72rem] tracking-[0.14em] text-noche uppercase transition-colors duration-300 hover:bg-seda"
+				>
+					Iniciar proyecto
+				</a>
+				<a
+					href="#trabajo"
+					class="border border-seda/35 px-7 py-4 font-mono text-[0.72rem] tracking-[0.14em] text-hueso uppercase transition-colors duration-300 hover:border-seda hover:bg-seda/10"
+				>
+					Ver el trabajo
+				</a>
+			</div>
+		</div>
+	</div>
+
+	<div
+		class="relative z-10 mx-auto flex w-full max-w-[110rem] items-center justify-between border-t border-seda/10 px-6 py-5 lg:px-10"
+	>
+		<span class="etiqueta">Scroll</span>
+		<span class="etiqueta tabular-nums">01 / 09</span>
+	</div>
+</section>
+
+<style>
+	/* Fundido cruzado. Sin desplazamiento ni zoom: con la retícula encima,
+	   cualquier movimiento del fondo la haría vibrar. */
+	.diapo {
+		opacity: 0;
+		transition: opacity 1600ms ease-in-out;
+	}
+
+	.diapo[data-activa='true'] {
+		opacity: 1;
+	}
+
+	/* Sin JS el primer fotograma se ve igual; el resto nunca aparece. */
+	@media (prefers-reduced-motion: reduce) {
+		.diapo {
+			transition: none;
+		}
+	}
+</style>
+
+<script>
+	const DURACION = 6000;
+	const diapos = Array.from<HTMLElement>(
+		document.querySelectorAll('#carrusel [data-diapo]'),
+	);
+	const sinMovimiento = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+	// Con un solo fotograma no hay carrusel; con movimiento reducido, tampoco.
+	if (diapos.length > 1 && !sinMovimiento) {
+		let actual = 0;
+
+		setInterval(() => {
+			// En una pestaña oculta el fundido no se ve: no gastamos ciclos en él.
+			if (document.hidden) return;
+
+			diapos[actual].dataset.activa = 'false';
+			actual = (actual + 1) % diapos.length;
+			diapos[actual].dataset.activa = 'true';
+		}, DURACION);
+	}
+</script>

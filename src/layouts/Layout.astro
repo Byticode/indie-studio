@@ -1,23 +1,46 @@
+---
+import '../styles/global.css';
+
+interface Props {
+	titulo?: string;
+	descripcion?: string;
+}
+
+const {
+	titulo = 'indie studio — Branding editorial y marketing de precisión',
+	descripcion = 'Elevamos marcas a través de dirección de arte editorial y marketing de precisión.',
+} = Astro.props;
+---
+
 <!doctype html>
-<html lang="en">
+<html lang="es">
 	<head>
 		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="icon" href="/favicon.ico" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
+
+		<title>{titulo}</title>
+		<meta name="description" content={descripcion} />
+		<meta property="og:title" content={titulo} />
+		<meta property="og:description" content={descripcion} />
+		<meta property="og:type" content="website" />
+
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			rel="stylesheet"
+			href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;1,6..72,300;1,6..72,400&family=Schibsted+Grotesk:wght@400;500;600;700&display=swap"
+		/>
 	</head>
-	<body>
+	<body class="bg-noche text-hueso antialiased">
+		<a
+			href="#contenido"
+			class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-100 focus:bg-hueso focus:px-4 focus:py-2 focus:text-noche"
+		>
+			Saltar al contenido
+		</a>
 		<slot />
 	</body>
 </html>
-
-<style>
-	html,
-	body {
-		margin: 0;
-		width: 100%;
-		height: 100%;
-	}
-</style>

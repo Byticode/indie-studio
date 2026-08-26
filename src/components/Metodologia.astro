@@ -1,0 +1,58 @@
+---
+// §07 Metodología — el proceso indie en cuatro fases. La numeración aquí es
+// real: responde «¿qué pasa después de que firme?».
+// La declaración-puente en serif hace de bisagra entre la prueba y el proceso.
+const fases = [
+	{
+		nombre: 'Auditoría & Descubrimiento',
+		descripcion: 'Análisis profundo de la marca y de la competencia.',
+	},
+	{
+		nombre: 'Dirección Creativa',
+		descripcion: 'Definición del universo visual y los pilares de comunicación.',
+	},
+	{
+		nombre: 'Despliegue Estratégico',
+		descripcion: 'Ejecución del diseño, lanzamiento de campañas y producción.',
+	},
+	{
+		nombre: 'Análisis & Optimización',
+		descripcion: 'Medición de datos para escalar los resultados.',
+	},
+];
+---
+
+<section id="proceso" class="bg-noche py-seccion">
+	<div class="mx-auto max-w-[110rem] px-6 lg:px-10">
+		<p
+			data-revela
+			class="mx-auto mb-28 max-w-[22ch] text-center font-serif text-3xl leading-tight font-light text-hueso lg:text-5xl"
+			style="text-wrap: balance;"
+		>
+			La creatividad sin estrategia es <em class="italic">decoración</em>.
+		</p>
+
+		<div data-revela class="mb-14 flex items-baseline justify-between border-b border-seda/15 pb-6">
+			<h2 class="font-display text-3xl font-medium tracking-[-0.02em] text-hueso lg:text-5xl">
+				El proceso indie
+			</h2>
+			<span class="etiqueta">06 · Metodología</span>
+		</div>
+
+		<ol class="grid gap-px overflow-hidden border border-seda/10 bg-seda/10 md:grid-cols-2 xl:grid-cols-4">
+			{
+				fases.map((fase, i) => (
+					<li data-revela class="flex min-h-56 flex-col justify-between bg-noche p-7">
+						<span class="font-mono text-sm text-seda tabular-nums">0{i + 1}</span>
+						<div>
+							<h3 class="font-display text-lg font-medium tracking-[-0.01em] text-hueso">
+								{fase.nombre}
+							</h3>
+							<p class="mt-3 text-sm leading-relaxed text-seda">{fase.descripcion}</p>
+						</div>
+					</li>
+				))
+			}
+		</ol>
+	</div>
+</section>

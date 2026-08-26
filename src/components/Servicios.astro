@@ -1,0 +1,67 @@
+---
+// §05 Ecosistema de Servicios — tres áreas leídas como tabla, no como
+// tres tarjetas iguales. La columna de resultado lleva el peso.
+const servicios = [
+	{
+		area: 'Branding Editorial',
+		componentes: 'Identidad visual · Brandbook · Naming',
+		resultado: 'Posicionamiento premium y diferenciación visual.',
+	},
+	{
+		area: 'Marketing Estratégico',
+		componentes: 'Pauta digital (Ads) · Embudos de venta',
+		resultado: 'Escalabilidad y conversión medible.',
+	},
+	{
+		area: 'Dirección de Arte',
+		componentes: 'Producción audiovisual · Fotografía',
+		resultado: 'Contenido que retiene la atención del usuario.',
+	},
+];
+---
+
+<section id="servicios" class="bg-noche py-seccion">
+	<div class="mx-auto max-w-[110rem] px-6 lg:px-10">
+		<div
+			data-revela
+			class="mb-4 flex items-baseline justify-between border-b border-seda/15 pb-6"
+		>
+			<h2 class="font-display text-3xl font-medium tracking-[-0.02em] text-hueso lg:text-5xl">
+				Servicios
+			</h2>
+			<span class="etiqueta">04 · Ecosistema</span>
+		</div>
+
+		<div role="list">
+			{
+				servicios.map((servicio, i) => (
+					<div
+						role="listitem"
+						data-revela
+						class="servicio grid gap-3 border-b border-seda/10 py-9 md:grid-cols-[2rem_1fr_1fr_1.2fr] md:items-baseline md:gap-8"
+					>
+						<span class="font-mono text-[0.7rem] text-seda-dim tabular-nums">
+							0{i + 1}
+						</span>
+						<h3 class="font-display text-xl font-medium tracking-[-0.01em] text-hueso lg:text-2xl">
+							{servicio.area}
+						</h3>
+						<p class="etiqueta leading-relaxed">{servicio.componentes}</p>
+						<p class="font-serif text-lg leading-snug text-seda italic lg:text-xl">
+							{servicio.resultado}
+						</p>
+					</div>
+				))
+			}
+		</div>
+	</div>
+</section>
+
+<style>
+	.servicio {
+		transition: border-color 400ms ease;
+	}
+	.servicio:hover {
+		border-color: color-mix(in srgb, var(--color-seda) 40%, transparent);
+	}
+</style>

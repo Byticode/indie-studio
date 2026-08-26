@@ -1,0 +1,45 @@
+---
+// §09 Footer — cierre y última red de seguridad. Fondo invertido respecto
+// al cuerpo: quien llegó hasta aquí sin escribir todavía tiene un camino.
+const año = new Date().getFullYear();
+---
+
+<footer class="bg-hueso text-tinta">
+	<div class="mx-auto max-w-[110rem] px-6 pt-20 pb-10 lg:px-10">
+		<div class="flex flex-col gap-14 border-b border-tinta/15 pb-14 lg:flex-row lg:items-end lg:justify-between">
+			<p class="font-display text-5xl font-semibold tracking-[-0.03em] lg:text-7xl">
+				indie<span class="text-tinta/45"> studio</span>
+			</p>
+			<div class="flex flex-col gap-2 lg:text-right">
+				<!-- PENDIENTE: correo y ciudad reales del estudio -->
+				<a href="mailto:hola@indiestudio.com" class="font-display text-xl underline-offset-4 hover:underline">
+					hola@indiestudio.com
+				</a>
+				<span class="etiqueta text-tinta/60">Ciudad · Disponibles en remoto</span>
+			</div>
+		</div>
+
+		<div class="flex flex-col gap-6 pt-8 md:flex-row md:items-center md:justify-between">
+			<ul class="flex gap-8">
+				<li>
+					<a href="https://instagram.com" rel="noopener" target="_blank" class="etiqueta text-tinta/70 transition-colors hover:text-tinta">Instagram</a>
+				</li>
+				<li>
+					<a href="https://linkedin.com" rel="noopener" target="_blank" class="etiqueta text-tinta/70 transition-colors hover:text-tinta">LinkedIn</a>
+				</li>
+			</ul>
+
+			<ul class="flex flex-wrap gap-x-8 gap-y-2">
+				<li><a href="/legal" class="etiqueta text-tinta/60 transition-colors hover:text-tinta">Aviso legal</a></li>
+				<li><a href="/privacidad" class="etiqueta text-tinta/60 transition-colors hover:text-tinta">Privacidad</a></li>
+				<li><a href="/cookies" class="etiqueta text-tinta/60 transition-colors hover:text-tinta">Cookies</a></li>
+			</ul>
+
+			<a href="#inicio" class="etiqueta text-tinta/70 transition-colors hover:text-tinta">↑ Volver arriba</a>
+		</div>
+
+		<p class="etiqueta mt-14 text-tinta/50">
+			© {año} indie studio · Independientes desde el primer día
+		</p>
+	</div>
+</footer>

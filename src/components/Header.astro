@@ -1,0 +1,120 @@
+---
+// §01 Navegación — su única obligación es que el CTA de contacto
+// nunca quede a más de un clic, en cualquier punto del scroll.
+const enlaces = [
+	{ texto: 'Trabajo', href: '#trabajo' },
+	{ texto: 'Servicios', href: '#servicios' },
+	{ texto: 'Proceso', href: '#proceso' },
+	{ texto: 'Estudio', href: '#estudio' },
+];
+---
+
+<header
+	id="cabecera"
+	data-pegada="false"
+	class="fixed inset-x-0 top-0 z-50 border-b border-transparent transition-[background-color,border-color,backdrop-filter] duration-500 data-[pegada=true]:border-seda/15 data-[pegada=true]:bg-noche/80 data-[pegada=true]:backdrop-blur-md"
+>
+	<nav
+		aria-label="Navegación principal"
+		class="mx-auto flex h-20 max-w-[110rem] items-center justify-between px-6 lg:px-10"
+	>
+		<a
+			href="#inicio"
+			class="font-display text-[0.95rem] font-semibold tracking-[-0.02em] text-hueso"
+		>
+			indie<span class="text-seda-dim"> studio</span>
+		</a>
+
+		<ul class="hidden items-center gap-9 md:flex">
+			{
+				enlaces.map((enlace) => (
+					<li>
+						<a
+							href={enlace.href}
+							class="etiqueta transition-colors duration-300 hover:text-hueso"
+						>
+							{enlace.texto}
+						</a>
+					</li>
+				))
+			}
+		</ul>
+
+		<div class="flex items-center gap-4">
+			<a
+				href="#contacto"
+				class="hidden border border-seda/40 px-5 py-2.5 font-mono text-[0.7rem] tracking-[0.14em] text-hueso uppercase transition-colors duration-300 hover:bg-hueso hover:text-noche md:inline-block"
+			>
+				Iniciar proyecto
+			</a>
+
+			<button
+				type="button"
+				id="menu-boton"
+				aria-controls="menu-movil"
+				aria-expanded="false"
+				class="etiqueta text-hueso md:hidden"
+			>
+				Menú
+			</button>
+		</div>
+	</nav>
+</header>
+
+<!-- Menú móvil a pantalla completa: mismo orden que el de escritorio, CTA al fondo -->
+<div
+	id="menu-movil"
+	hidden
+	class="fixed inset-0 z-40 flex flex-col justify-between bg-noche px-6 pt-28 pb-10 md:hidden"
+>
+	<ul class="flex flex-col gap-2">
+		{
+			enlaces.map((enlace) => (
+				<li>
+					<a
+						href={enlace.href}
+						data-cierra-menu
+						class="block py-2 font-display text-4xl font-medium tracking-[-0.03em] text-hueso"
+					>
+						{enlace.texto}
+					</a>
+				</li>
+			))
+		}
+	</ul>
+	<a
+		href="#contacto"
+		data-cierra-menu
+		class="block border border-seda/40 py-4 text-center font-mono text-[0.75rem] tracking-[0.14em] text-hueso uppercase"
+	>
+		Iniciar proyecto
+	</a>
+</div>
+
+<script>
+	const cabecera = document.getElementById('cabecera')!;
+	const boton = document.getElementById('menu-boton')!;
+	const menu = document.getElementById('menu-movil')!;
+
+	// La barra se vuelve sólida en cuanto el hero deja de cubrir la altura del header
+	const alSalirDelHero = () => {
+		cabecera.dataset.pegada = String(window.scrollY > 80);
+	};
+	alSalirDelHero();
+	window.addEventListener('scroll', alSalirDelHero, { passive: true });
+
+	const alternarMenu = (abrir: boolean) => {
+		menu.hidden = !abrir;
+		boton.setAttribute('aria-expanded', String(abrir));
+		boton.textContent = abrir ? 'Cerrar' : 'Menú';
+		document.body.style.overflow = abrir ? 'hidden' : '';
+	};
+
+	boton.addEventListener('click', () => alternarMenu(menu.hidden));
+	menu.querySelectorAll('[data-cierra-menu]').forEach((enlace) =>
+		enlace.addEventListener('click', () => alternarMenu(false)),
+	);
+	document.addEventListener('keydown', (evento) => {
+		if (evento.key === 'Escape' && !menu.hidden) alternarMenu(false);
+	});
+</script>
