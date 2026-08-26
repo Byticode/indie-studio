@@ -60,7 +60,7 @@ const presupuestos = ['$1,000 – $3,000', '$3,000 – $10,000', 'Más de $10,00
 					</select>
 					<Icono
 						nombre="chevron-abajo"
-						clase="selector-icono pointer-events-none h-4 w-4 text-seda-dim"
+						clase="selector-icono pointer-events-none text-base text-seda-dim"
 					/>
 				</span>
 			</label>
@@ -74,7 +74,7 @@ const presupuestos = ['$1,000 – $3,000', '$3,000 – $10,000', 'Más de $10,00
 					</select>
 					<Icono
 						nombre="chevron-abajo"
-						clase="selector-icono pointer-events-none h-4 w-4 text-seda-dim"
+						clase="selector-icono pointer-events-none text-base text-seda-dim"
 					/>
 				</span>
 			</label>
@@ -87,12 +87,12 @@ const presupuestos = ['$1,000 – $3,000', '$3,000 – $10,000', 'Más de $10,00
 			<button
 				type="submit"
 				data-magnetico
-				class="group inline-flex items-center gap-3 self-start bg-hueso px-8 py-4 font-mono text-[0.8rem] font-medium tracking-[0.14em] text-noche uppercase transition-colors duration-300 hover:bg-seda"
+				class="group inline-flex items-center gap-3 self-start rounded-full bg-hueso px-8 py-4 font-mono text-[0.8rem] font-medium tracking-[0.14em] text-noche uppercase transition-colors duration-300 hover:bg-seda"
 			>
 				Enviar propuesta
 				<Icono
 					nombre="flecha-arriba-derecha"
-					clase="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+					clase="text-sm transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
 				/>
 			</button>
 		</form>
@@ -105,24 +105,26 @@ const presupuestos = ['$1,000 – $3,000', '$3,000 – $10,000', 'Más de $10,00
 		flex-direction: column;
 		gap: 0.65rem;
 	}
+	/* Campos rellenos y redondeados: la superficie en Carbón sustituye a la
+	   antigua línea inferior. El foco lo señala el anillo global (curvo,
+	   porque sigue el radio del campo) más un punto extra de luz. */
 	.campo input,
 	.campo select,
 	.campo textarea {
 		width: 100%;
-		background: transparent;
+		background: var(--color-carbon);
 		border: 0;
-		border-bottom: 1px solid color-mix(in srgb, var(--color-seda) 30%, transparent);
-		padding: 0.55rem 0;
+		padding: 0.85rem 1.15rem;
 		font-family: var(--font-sans);
 		font-size: 1rem;
 		color: var(--color-hueso);
-		border-radius: 0;
-		transition: border-color 300ms ease;
+		border-radius: 1.1rem;
+		transition: background-color 300ms ease;
 	}
 	.campo select {
 		appearance: none;
 		cursor: pointer;
-		padding-right: 1.75rem;
+		padding-right: 2.75rem;
 	}
 	.campo option {
 		background: var(--color-carbon);
@@ -134,8 +136,7 @@ const presupuestos = ['$1,000 – $3,000', '$3,000 – $10,000', 'Más de $10,00
 	.campo input:focus-visible,
 	.campo select:focus-visible,
 	.campo textarea:focus-visible {
-		outline: none;
-		border-bottom-color: var(--color-hueso);
+		background-color: color-mix(in srgb, var(--color-carbon) 82%, var(--color-seda));
 	}
 
 	/* El chevron sustituye a la flecha nativa del select, en el mismo trazo
@@ -146,7 +147,7 @@ const presupuestos = ['$1,000 – $3,000', '$3,000 – $10,000', 'Más de $10,00
 	}
 	.selector :global(.selector-icono) {
 		position: absolute;
-		right: 0.15rem;
+		right: 1.15rem;
 		top: 50%;
 		transform: translateY(-50%);
 	}
