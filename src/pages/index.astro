@@ -111,6 +111,49 @@ import Footer from '../components/Footer.astro';
 				},
 			);
 		});
+
+		// Paneles apilados: cada sección con [data-panel] se clava cuando su
+		// borde inferior toca el de la ventana, aguanta quieta un colchón de
+		// scroll — tiempo de lectura — y solo entonces la siguiente se desliza
+		// por encima mientras la clavada crece y se apaga.
+		//
+		// El colchón es el margin-bottom que .listo [data-panel] pone en vh:
+		// el margen retrasa la llegada de la siguiente sección y el pin consume
+		// ese recorrido con la sección entera en pantalla. La fuente de verdad
+		// es el CSS — aquí solo se lee — y al ir en vh la proporción sobrevive
+		// los resize sin recalcular.
+		//
+		// Las secciones conservan su altura natural, así que el «overscroll»
+		// sale gratis: una sección más alta que la ventana se recorre entera
+		// con scroll nativo antes de clavarse.
+		//
+		// Fuera de la lista: The Work (ya se clava a sí misma para la galería
+		// horizontal; dos pins sobre el mismo elemento entran en conflicto) y
+		// Contacto (panel final — desvanecer el formulario mientras se rellena
+		// lo inutilizaría, y tras él no queda recorrido para completar el fundido).
+		gsap.utils.toArray<HTMLElement>('[data-panel]').forEach((panel) => {
+			const margen = () => parseFloat(getComputedStyle(panel).marginBottom);
+			const colchon = margen() / window.innerHeight;
+
+			gsap
+				.timeline({
+					scrollTrigger: {
+						trigger: panel,
+						start: 'bottom bottom',
+						end: () => `+=${window.innerHeight + margen()}`,
+						pin: true,
+						pinSpacing: false,
+						scrub: true,
+						invalidateOnRefresh: true,
+					},
+				})
+				// Aguante: la sección completa y quieta mientras el colchón se consume.
+				.to({}, { duration: colchon })
+				// Relevo: 0.9 del recorrido para el crecimiento y 0.1 para el apagón
+				// final — la sección nunca desaparece antes de quedar cubierta.
+				.fromTo(panel, { scale: 1, opacity: 1 }, { scale: 1.8, opacity: 0.5, duration: 0.9 })
+				.to(panel, { opacity: 0, duration: 0.1 });
+		});
 	});
 
 	// Botones magnéticos: el CTA se inclina hacia el cursor y vuelve solo.
