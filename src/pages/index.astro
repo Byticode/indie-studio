@@ -38,43 +38,19 @@ import Footer from '../components/Footer.astro';
 
 	gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
 
+	// Con la galería clavada también en táctil, el resize que provoca la
+	// barra de direcciones al ocultarse no debe refrescar los triggers:
+	// refrescar en pleno pin hace saltar la sección.
+	ScrollTrigger.config({ ignoreMobileResize: true });
+
 	const mm = gsap.matchMedia();
 
+	// Animaciones ligeras — cualquier dispositivo sin movimiento reducido:
+	// entrada del hero y revelados. En móvil son todo lo que corre aquí.
 	mm.add('(prefers-reduced-motion: no-preference)', () => {
 		// Ocultamos sólo ahora: si el script no llega a correr, el contenido
 		// se queda visible en lugar de desaparecer.
 		document.documentElement.classList.add('listo');
-
-		// El scroll suave pasa a manos de GSAP; el nativo de CSS lo duplicaría.
-		document.documentElement.style.scrollBehavior = 'auto';
-
-		const suavizador = ScrollSmoother.create({
-			wrapper: '#smooth-wrapper',
-			content: '#smooth-content',
-			smooth: 1,
-			effects: false,
-			smoothTouch: false,
-			// Con una sección fijada (galería de The Work), el scroll normalizado
-			// evita saltos del pin en móvil por el redimensionado de la barra
-			// de direcciones.
-			normalizeScroll: true,
-			ignoreMobileResize: true,
-		});
-
-		// Con el contenido transformado, los anclas pasan por el suavizador.
-		// El salto de accesibilidad (#contenido) se queda nativo e instantáneo.
-		document.addEventListener('click', (evento) => {
-			if (!(evento.target instanceof Element)) return;
-			const enlace = evento.target.closest('a[href^="#"]');
-			if (!enlace) return;
-			const href = enlace.getAttribute('href')!;
-			if (href === '#contenido' || href.length < 2) return;
-			const destino = document.querySelector(href);
-			if (!destino) return;
-			evento.preventDefault();
-			suavizador.scrollTo(destino, true);
-			history.pushState(null, '', href);
-		});
 
 		// Entrada del hero: el titular sube enmascarado línea a línea
 		// y el resto llega en cascada, una sola secuencia orquestada.
@@ -111,6 +87,40 @@ import Footer from '../components/Footer.astro';
 				},
 			);
 		});
+	});
+
+	// Maquinaria de scroll cinematográfico — solo punteros finos y sin
+	// movimiento reducido. En táctil manda el scroll nativo: normalizeScroll
+	// apagaba el pan vertical del navegador (touch-action: pan-x) y todo el
+	// desplazamiento pasaba a depender de JS en el hilo principal — frágil
+	// en el móvil real —, y los colchones de los paneles, sin rueda ni
+	// scrollbar de referencia, se sienten como una página atascada.
+	mm.add('(pointer: fine) and (prefers-reduced-motion: no-preference)', () => {
+		// El scroll suave pasa a manos de GSAP; el nativo de CSS lo duplicaría.
+		document.documentElement.style.scrollBehavior = 'auto';
+
+		const suavizador = ScrollSmoother.create({
+			wrapper: '#smooth-wrapper',
+			content: '#smooth-content',
+			smooth: 1,
+			effects: false,
+		});
+
+		// Con el contenido transformado, los anclas pasan por el suavizador.
+		// El salto de accesibilidad (#contenido) se queda nativo e instantáneo.
+		const alClicar = (evento: MouseEvent) => {
+			if (!(evento.target instanceof Element)) return;
+			const enlace = evento.target.closest('a[href^="#"]');
+			if (!enlace) return;
+			const href = enlace.getAttribute('href')!;
+			if (href === '#contenido' || href.length < 2) return;
+			const destino = document.querySelector(href);
+			if (!destino) return;
+			evento.preventDefault();
+			suavizador.scrollTo(destino, true);
+			history.pushState(null, '', href);
+		};
+		document.addEventListener('click', alClicar);
 
 		// Paneles apilados: cada sección con [data-panel] se clava cuando su
 		// borde inferior toca el de la ventana, aguanta quieta un colchón de
@@ -154,6 +164,13 @@ import Footer from '../components/Footer.astro';
 				.fromTo(panel, { scale: 1, opacity: 1 }, { scale: 1.8, opacity: 0.5, duration: 0.9 })
 				.to(panel, { opacity: 0, duration: 0.1 });
 		});
+
+		// Al salir del contexto, GSAP revierte smoother y triggers solo;
+		// aquí devolvemos lo que tocamos a mano.
+		return () => {
+			document.removeEventListener('click', alClicar);
+			document.documentElement.style.scrollBehavior = '';
+		};
 	});
 
 	// Botones magnéticos: el CTA se inclina hacia el cursor y vuelve solo.

@@ -160,10 +160,13 @@
   /* Colchón de los paneles apilados: recorrido extra en el que la sección
      clavada se queda entera y quieta — tiempo de lectura — antes de que la
      siguiente la cubra. El script lo lee del margen computado, así que
-     ajustarlo aquí basta. Solo bajo .listo: en el fallback estático el
-     margen abriría huecos vacíos entre secciones. */
-  .listo [data-panel] {
-    margin-bottom: 60vh;
+     ajustarlo aquí basta. Solo bajo .listo y con puntero fino: los paneles
+     no corren en táctil ni en el fallback estático, y el margen abriría
+     huecos vacíos entre secciones. */
+  @media (pointer: fine) {
+    .listo [data-panel] {
+      margin-bottom: 60vh;
+    }
   }
 
   /* Flecha de scroll del hero: un empuje suave y periódico hacia abajo.

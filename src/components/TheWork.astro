@@ -44,7 +44,7 @@ const casos = [
 		<div class="mx-auto w-full max-w-[110rem] px-6 lg:px-10">
 			<div data-revela class="flex items-baseline justify-between">
 				<h2 class="font-display text-4xl font-normal tracking-[-0.015em] text-hueso lg:text-6xl">
-					The Work
+					Proyectos
 				</h2>
 				<span class="etiqueta hidden md:block">El scroll recorre la galería</span>
 			</div>
@@ -191,6 +191,37 @@ const casos = [
 		});
 	}
 
+	// Las métricas cuentan al acercarse la sección, desligadas del pin:
+	// así el arranque es idéntico en todos los dispositivos.
+	gsap.matchMedia().add('(prefers-reduced-motion: no-preference)', () => {
+		const seccion = document.getElementById('trabajo');
+		if (!seccion || contadores.length === 0) return;
+
+		ScrollTrigger.create({
+			trigger: seccion,
+			start: 'top 70%',
+			once: true,
+			onEnter: () => {
+				contadores.forEach((nodo) => {
+					const final = Number(nodo.dataset.valor);
+					if (!Number.isFinite(final)) return;
+					const progreso = { valor: 0 };
+					gsap.to(progreso, {
+						valor: final,
+						duration: 1.6,
+						ease: 'power3.out',
+						onUpdate: () => (nodo.textContent = String(Math.round(progreso.valor))),
+					});
+				});
+			},
+		});
+	});
+
+	// Galería clavada: en cualquier dispositivo — es la firma de la sección.
+	// En táctil corre sobre el scroll nativo (aquí no hace falta smoother ni
+	// normalizeScroll): el swipe vertical se convierte en recorrido
+	// horizontal mientras la sección está fijada. El fallback de overflow-x
+	// queda para prefers-reduced-motion o JS caído.
 	gsap.matchMedia().add('(prefers-reduced-motion: no-preference)', () => {
 		const seccion = document.getElementById('trabajo');
 		const galeria = seccion?.querySelector<HTMLElement>('[data-galeria]');
@@ -205,7 +236,6 @@ const casos = [
 		// Pin + scrub: la sección se clava y el scroll vertical se convierte
 		// en recorrido horizontal. Los valores por función + invalidateOnRefresh
 		// recalculan las medidas en cada refresh (resize, carga de fuentes).
-		let contado = false;
 		const horizontal = gsap.to(pista, {
 			x: () => -(pista.scrollWidth - window.innerWidth),
 			ease: 'none',
@@ -216,22 +246,6 @@ const casos = [
 				start: 'top top',
 				end: () => `+=${pista.scrollWidth}`,
 				invalidateOnRefresh: true,
-				onEnter: () => {
-					// Las métricas arrancan cuando la galería se fija, una sola vez.
-					if (contado) return;
-					contado = true;
-					contadores.forEach((nodo) => {
-						const final = Number(nodo.dataset.valor);
-						if (!Number.isFinite(final)) return;
-						const progreso = { valor: 0 };
-						gsap.to(progreso, {
-							valor: final,
-							duration: 1.6,
-							ease: 'power3.out',
-							onUpdate: () => (nodo.textContent = String(Math.round(progreso.valor))),
-						});
-					});
-				},
 			},
 		});
 
