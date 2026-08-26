@@ -31,11 +31,10 @@ const testimonios = [
 
 <section id="colaboraciones" class="overflow-hidden bg-noche py-seccion">
 	<div class="mx-auto mb-14 max-w-[110rem] px-6 lg:px-10">
-		<div data-revela class="flex items-baseline justify-between border-b border-seda/15 pb-6">
-			<h2 class="font-display text-3xl font-medium tracking-[-0.02em] text-hueso lg:text-5xl">
+		<div data-revela class="border-b border-seda/15 pb-6">
+			<h2 class="font-display text-4xl font-normal tracking-[-0.015em] text-hueso lg:text-6xl">
 				Colaboraciones
 			</h2>
-			<span class="etiqueta">05 · Prueba social</span>
 		</div>
 	</div>
 
@@ -47,7 +46,7 @@ const testimonios = [
 				[...marcas, ...marcas].map((marca) => (
 					<span
 						aria-hidden="true"
-						class="font-display text-2xl font-medium tracking-[0.04em] whitespace-nowrap text-seda-dim transition-colors duration-500 hover:text-seda lg:text-3xl"
+						class="font-display text-2xl font-normal tracking-[0.02em] whitespace-nowrap text-seda-dim transition-colors duration-500 hover:text-seda lg:text-3xl"
 					>
 						{marca}
 					</span>
@@ -64,7 +63,7 @@ const testimonios = [
 			testimonios.map((testimonio) => (
 				<figure data-revela class="border-t border-seda/15 pt-8">
 					<blockquote>
-						<p class="font-serif text-2xl leading-snug font-light text-hueso lg:text-[2rem]">
+						<p class="font-display text-2xl leading-snug font-normal text-hueso lg:text-[2rem]">
 							«{testimonio.cita}»
 						</p>
 					</blockquote>
@@ -78,15 +77,42 @@ const testimonios = [
 </section>
 
 <script>
-	import { animate } from 'motion';
+	import gsap from 'gsap';
+	import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-	// Marquee con motion: la pista se desplaza media longitud (una copia) y
-	// reinicia — el duplicado hace el corte invisible. En reduced motion la
-	// cinta queda estática, que era el estado de reposo previsto.
-	const pista = document.querySelector<HTMLElement>('[data-marquee]');
-	const sinMovimiento = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+	gsap.registerPlugin(ScrollTrigger);
 
-	if (pista && !sinMovimiento) {
-		animate(pista, { x: ['0%', '-50%'] }, { duration: 36, ease: 'linear', repeat: Infinity });
-	}
+	// Marquee vivo: la pista se desplaza media longitud (una copia) en bucle —
+	// el duplicado hace el corte invisible. Al scrollear, la cinta acelera y
+	// se inclina según la velocidad, y decae sola al reposo: se siente física,
+	// no un gif. En reduced motion queda estática, su estado de reposo.
+	gsap.matchMedia().add('(prefers-reduced-motion: no-preference)', () => {
+		const pista = document.querySelector<HTMLElement>('[data-marquee]');
+		if (!pista) return;
+
+		const cinta = gsap.to(pista, { xPercent: -50, ease: 'none', duration: 36, repeat: -1 });
+		const inclinar = gsap.quickTo(pista, 'skewX', { duration: 0.5, ease: 'power2.out' });
+		let reposo: ReturnType<typeof setTimeout>;
+
+		ScrollTrigger.create({
+			trigger: document.body,
+			start: 0,
+			end: 'max',
+			onUpdate(auto) {
+				const velocidad = auto.getVelocity();
+				gsap.to(cinta, {
+					timeScale: 1 + Math.min(Math.abs(velocidad) / 1200, 2.5),
+					duration: 0.25,
+					overwrite: true,
+				});
+				inclinar(gsap.utils.clamp(-5, 5, velocidad / 300));
+
+				clearTimeout(reposo);
+				reposo = setTimeout(() => {
+					gsap.to(cinta, { timeScale: 1, duration: 0.9 });
+					inclinar(0);
+				}, 150);
+			},
+		});
+	});
 </script>

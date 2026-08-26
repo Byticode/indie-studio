@@ -1,25 +1,29 @@
 ---
 // §03 El Manifiesto — respiro visual y filtro.
 // El corte de valor con el hero (negro → hueso) es parte del mensaje.
-// Sin imagen de fondo: aquí solo trabaja la tipografía.
+// Sin imagen de fondo: aquí solo trabaja la tipografía — y el scroll la lee
+// en voz alta: cada palabra se enciende al ritmo del desplazamiento.
 //
 // Nota de medida: los `ch` van sobre el propio elemento de texto, no sobre el
 // contenedor. En el contenedor se resolverían contra los 16px heredados y la
 // columna saldría a un tercio de su ancho.
+//
+// La etiqueta ya no es sticky: position sticky no funciona dentro del
+// contenido transformado por ScrollSmoother.
 ---
 
 <section id="estudio" class="bg-hueso py-seccion text-tinta">
 	<div class="mx-auto grid max-w-[110rem] gap-12 px-6 lg:grid-cols-[10rem_minmax(0,1fr)] lg:gap-16 lg:px-10">
-		<p class="etiqueta self-start text-tinta/70 lg:sticky lg:top-28">Manifiesto</p>
+		<p class="etiqueta self-start text-tinta/70">Manifiesto</p>
 
 		<div>
 			<p
-				data-revela
-				class="max-w-[18ch] font-serif font-light"
-				style="font-size: clamp(2rem, 5.2vw, 4.25rem); line-height: 1.08; letter-spacing: -0.02em; text-wrap: balance;"
+				data-manifiesto
+				class="max-w-[18ch] font-display font-normal"
+				style="font-size: clamp(2rem, 5.2vw, 4.25rem); line-height: 1.08; letter-spacing: -0.015em; text-wrap: balance;"
 			>
 				No creemos en el marketing que interrumpe. Creemos en marcas tan bien
-				construidas que la gente <em class="italic">se detiene sola</em>.
+				construidas que la gente <span class="trazo-bajo">se detiene sola</span>.
 			</p>
 
 			<p
@@ -32,3 +36,38 @@
 		</div>
 	</div>
 </section>
+
+<script>
+	import gsap from 'gsap';
+	import { ScrollTrigger } from 'gsap/ScrollTrigger';
+	import { SplitText } from 'gsap/SplitText';
+
+	gsap.registerPlugin(ScrollTrigger, SplitText);
+
+	// Lectura guiada: la declaración se trocea en palabras y cada una pasa de
+	// apagada a tinta plena atada al scroll (scrub). Ir hacia atrás la vuelve
+	// a apagar: el manifiesto se lee al ritmo de quien lo lee.
+	gsap.matchMedia().add('(prefers-reduced-motion: no-preference)', () => {
+		const frase = document.querySelector<HTMLElement>('[data-manifiesto]');
+		if (!frase) return;
+
+		const troceado = new SplitText(frase, { type: 'words' });
+		gsap.fromTo(
+			troceado.words,
+			{ opacity: 0.14 },
+			{
+				opacity: 1,
+				stagger: 0.05,
+				ease: 'none',
+				scrollTrigger: {
+					trigger: frase,
+					start: 'top 78%',
+					end: 'bottom 45%',
+					scrub: true,
+				},
+			},
+		);
+
+		return () => troceado.revert();
+	});
+</script>

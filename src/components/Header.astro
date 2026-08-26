@@ -1,4 +1,6 @@
 ---
+import Icono from './Icono.astro';
+
 // §01 Navegación — su única obligación es que el CTA de contacto
 // nunca quede a más de un clic, en cualquier punto del scroll.
 const enlaces = [
@@ -20,7 +22,7 @@ const enlaces = [
 	>
 		<a
 			href="#inicio"
-			class="font-display text-[0.95rem] font-semibold tracking-[-0.02em] text-hueso"
+			class="font-display text-[1.1rem] font-medium tracking-[-0.01em] text-hueso"
 		>
 			indie<span class="text-seda-dim"> studio</span>
 		</a>
@@ -43,7 +45,7 @@ const enlaces = [
 		<div class="flex items-center gap-4">
 			<a
 				href="#contacto"
-				class="hidden border border-seda/40 px-5 py-2.5 font-mono text-[0.7rem] tracking-[0.14em] text-hueso uppercase transition-colors duration-300 hover:bg-hueso hover:text-noche md:inline-block"
+				class="hidden border border-seda/40 px-5 py-2.5 font-mono text-[0.8rem] font-medium tracking-[0.14em] text-hueso uppercase transition-colors duration-300 hover:bg-hueso hover:text-noche md:inline-block"
 			>
 				Iniciar proyecto
 			</a>
@@ -53,9 +55,11 @@ const enlaces = [
 				id="menu-boton"
 				aria-controls="menu-movil"
 				aria-expanded="false"
-				class="etiqueta text-hueso md:hidden"
+				class="etiqueta inline-flex items-center gap-2.5 text-hueso md:hidden"
 			>
-				Menú
+				<span data-menu-texto>Menú</span>
+				<Icono nombre="menu" clase="icono-menu h-5 w-5" />
+				<Icono nombre="cerrar" clase="icono-cerrar hidden h-5 w-5" />
 			</button>
 		</div>
 	</nav>
@@ -74,7 +78,7 @@ const enlaces = [
 					<a
 						href={enlace.href}
 						data-cierra-menu
-						class="block py-2 font-display text-4xl font-medium tracking-[-0.03em] text-hueso"
+						class="block py-2 font-display text-4xl font-normal tracking-[-0.015em] text-hueso"
 					>
 						{enlace.texto}
 					</a>
@@ -85,7 +89,7 @@ const enlaces = [
 	<a
 		href="#contacto"
 		data-cierra-menu
-		class="block border border-seda/40 py-4 text-center font-mono text-[0.75rem] tracking-[0.14em] text-hueso uppercase"
+		class="block border border-seda/40 py-4 text-center font-mono text-[0.85rem] font-medium tracking-[0.14em] text-hueso uppercase"
 	>
 		Iniciar proyecto
 	</a>
@@ -103,14 +107,20 @@ const enlaces = [
 	alSalirDelHero();
 	window.addEventListener('scroll', alSalirDelHero, { passive: true });
 
+	const textoBoton = boton.querySelector('[data-menu-texto]')!;
+	const iconoMenu = boton.querySelector('.icono-menu')!;
+	const iconoCerrar = boton.querySelector('.icono-cerrar')!;
+
 	const alternarMenu = (abrir: boolean) => {
 		menu.hidden = !abrir;
 		boton.setAttribute('aria-expanded', String(abrir));
-		boton.textContent = abrir ? 'Cerrar' : 'Menú';
+		textoBoton.textContent = abrir ? 'Cerrar' : 'Menú';
+		iconoMenu.classList.toggle('hidden', abrir);
+		iconoCerrar.classList.toggle('hidden', !abrir);
 		document.body.style.overflow = abrir ? 'hidden' : '';
 	};
 
-	boton.addEventListener('click', () => alternarMenu(menu.hidden));
+	boton.addEventListener('click', () => alternarMenu(Boolean(menu.hidden)));
 	menu.querySelectorAll('[data-cierra-menu]').forEach((enlace) =>
 		enlace.addEventListener('click', () => alternarMenu(false)),
 	);

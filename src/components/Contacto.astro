@@ -1,4 +1,6 @@
 ---
+import Icono from './Icono.astro';
+
 // §08 Cualificación y Contacto — nunca solo un correo: el formulario pide
 // contexto antes de la conversación y filtra a quien no encaja.
 //
@@ -18,13 +20,13 @@ const presupuestos = ['$1,000 – $3,000', '$3,000 – $10,000', 'Más de $10,00
 <section id="contacto" class="bg-noche py-seccion">
 	<div class="mx-auto grid max-w-[110rem] gap-16 px-6 lg:grid-cols-2 lg:gap-24 lg:px-10">
 		<div>
-			<span data-revela class="etiqueta">07 · Contacto</span>
+			<span data-revela class="etiqueta">Contacto</span>
 			<h2
 				data-revela
-				class="mt-6 font-serif text-5xl leading-none font-light text-hueso lg:text-7xl"
+				class="mt-6 font-display text-5xl leading-[1.05] font-normal text-hueso lg:text-7xl"
 				style="letter-spacing: -0.02em; text-wrap: balance;"
 			>
-				¿Tienes un proyecto <em class="italic">en mente</em>?
+				¿Tienes un proyecto en mente?
 			</h2>
 			<p data-revela class="mt-8 max-w-[40ch] text-lg leading-relaxed text-seda">
 				Cuéntanos el desafío. Respondemos en 48 horas laborables, y solo tomamos
@@ -51,18 +53,30 @@ const presupuestos = ['$1,000 – $3,000', '$3,000 – $10,000', 'Más de $10,00
 
 			<label class="campo">
 				<span class="etiqueta">¿Cuál es tu mayor desafío actual?</span>
-				<select name="desafio" required>
-					<option value="" selected disabled>Selecciona una opción</option>
-					{desafios.map((desafio) => <option value={desafio}>{desafio}</option>)}
-				</select>
+				<span class="selector">
+					<select name="desafio" required>
+						<option value="" selected disabled>Selecciona una opción</option>
+						{desafios.map((desafio) => <option value={desafio}>{desafio}</option>)}
+					</select>
+					<Icono
+						nombre="chevron-abajo"
+						clase="selector-icono pointer-events-none h-4 w-4 text-seda-dim"
+					/>
+				</span>
 			</label>
 
 			<label class="campo">
 				<span class="etiqueta">Rango de presupuesto estimado</span>
-				<select name="presupuesto">
-					<option value="" selected disabled>Selecciona una opción</option>
-					{presupuestos.map((rango) => <option value={rango}>{rango}</option>)}
-				</select>
+				<span class="selector">
+					<select name="presupuesto">
+						<option value="" selected disabled>Selecciona una opción</option>
+						{presupuestos.map((rango) => <option value={rango}>{rango}</option>)}
+					</select>
+					<Icono
+						nombre="chevron-abajo"
+						clase="selector-icono pointer-events-none h-4 w-4 text-seda-dim"
+					/>
+				</span>
 			</label>
 
 			<label class="campo">
@@ -72,9 +86,14 @@ const presupuestos = ['$1,000 – $3,000', '$3,000 – $10,000', 'Más de $10,00
 
 			<button
 				type="submit"
-				class="self-start bg-hueso px-8 py-4 font-mono text-[0.72rem] tracking-[0.14em] text-noche uppercase transition-colors duration-300 hover:bg-seda"
+				data-magnetico
+				class="group inline-flex items-center gap-3 self-start bg-hueso px-8 py-4 font-mono text-[0.8rem] font-medium tracking-[0.14em] text-noche uppercase transition-colors duration-300 hover:bg-seda"
 			>
 				Enviar propuesta
+				<Icono
+					nombre="flecha-arriba-derecha"
+					clase="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+				/>
 			</button>
 		</form>
 	</div>
@@ -89,11 +108,12 @@ const presupuestos = ['$1,000 – $3,000', '$3,000 – $10,000', 'Más de $10,00
 	.campo input,
 	.campo select,
 	.campo textarea {
+		width: 100%;
 		background: transparent;
 		border: 0;
 		border-bottom: 1px solid color-mix(in srgb, var(--color-seda) 30%, transparent);
 		padding: 0.55rem 0;
-		font-family: var(--font-display);
+		font-family: var(--font-sans);
 		font-size: 1rem;
 		color: var(--color-hueso);
 		border-radius: 0;
@@ -102,6 +122,7 @@ const presupuestos = ['$1,000 – $3,000', '$3,000 – $10,000', 'Más de $10,00
 	.campo select {
 		appearance: none;
 		cursor: pointer;
+		padding-right: 1.75rem;
 	}
 	.campo option {
 		background: var(--color-carbon);
@@ -115,5 +136,18 @@ const presupuestos = ['$1,000 – $3,000', '$3,000 – $10,000', 'Más de $10,00
 	.campo textarea:focus-visible {
 		outline: none;
 		border-bottom-color: var(--color-hueso);
+	}
+
+	/* El chevron sustituye a la flecha nativa del select, en el mismo trazo
+	   que el resto de iconos de la web. */
+	.selector {
+		position: relative;
+		display: block;
+	}
+	.selector :global(.selector-icono) {
+		position: absolute;
+		right: 0.15rem;
+		top: 50%;
+		transform: translateY(-50%);
 	}
 </style>

@@ -1,6 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
+import Icono from './Icono.astro';
 
 // §02 El Gancho — qué hacemos y para quién, legible en menos de 3 segundos.
 //
@@ -8,17 +9,20 @@ import type { ImageMetadata } from 'astro';
 //   1. ['Lo bonito no vende.', 'Lo inevitable sí.']          ← en uso
 //   2. ['Dirección de arte', 'que se nota en la caja.']
 //   3. ['Construimos marcas que', 'se eligen antes de compararse.']
+//
+// El énfasis lo lleva el color, no la cursiva: la negación en Gris Sedoso,
+// la afirmación en hueso.
 const SLOGAN = ['Lo bonito no vende.', 'Lo inevitable sí.'];
 
 const SUBTITULAR =
 	'Elevamos marcas a través de dirección de arte editorial y marketing de precisión.';
 
+// Índice de disciplinas del pie del hero: numerado en mono, nombrado en serif.
+const DISCIPLINAS = ['Branding', 'Dirección de marca', 'Marketing de precisión'];
+
 // El carrusel se alimenta de la carpeta, no de una lista a mano: para cambiar la
 // fotografía basta con soltar los archivos en src/assets/hero/ y borrar los que
 // sobren. El orden lo marca el nombre del archivo.
-//
-// Las imágenes actuales son MARCADORES DE POSICIÓN generados por código.
-// Sustituir por fotografía arquitectónica, urbana o editorial real.
 const modulos = import.meta.glob<{ default: ImageMetadata }>(
 	'../assets/hero/*.{jpg,jpeg,png,webp,avif}',
 	{ eager: true },
@@ -26,6 +30,8 @@ const modulos = import.meta.glob<{ default: ImageMetadata }>(
 const imagenes = Object.entries(modulos)
 	.sort(([a], [b]) => a.localeCompare(b))
 	.map(([, modulo]) => modulo.default);
+
+const totalDiapos = String(imagenes.length).padStart(2, '0');
 ---
 
 <section
@@ -44,7 +50,9 @@ const imagenes = Object.entries(modulos)
 			</video>
 			Requisitos: < 2,5 MB, póster obligatorio, y en móvil solo el póster.
 		-->
-		<div id="carrusel" class="absolute inset-0">
+		<!-- El contenedor sobresale un 16% por arriba: es el recorrido que el
+		     parallax consume al desplazarse sin dejar hueco en el borde. -->
+		<div id="carrusel" class="absolute inset-x-0 -top-[16%] bottom-0">
 			{
 				imagenes.map((imagen, i) => (
 					<Image
@@ -89,48 +97,96 @@ const imagenes = Object.entries(modulos)
 	</div>
 
 	<div class="relative z-10 mx-auto flex w-full max-w-[110rem] flex-1 flex-col justify-end px-6 pt-32 pb-10 lg:px-10 lg:pb-14">
-		<p data-anim class="etiqueta mb-8 text-seda">Branding · Dirección de arte · Marketing</p>
+		<p data-anim class="etiqueta mb-8 text-seda">Estudio independiente</p>
 
 		<h1
-			class="font-display font-medium text-hueso"
-			style="font-size: clamp(2.75rem, 9.5vw, 9rem); line-height: 0.9; letter-spacing: -0.045em; text-wrap: balance;"
+			class="font-display font-normal text-hueso"
+			style="font-size: clamp(3rem, 7vw, 6.75rem); line-height: 0.98; letter-spacing: -0.03em;"
 		>
 			{
+				/* Cada línea vive dentro de su propia máscara (overflow hidden) y entra
+				   deslizándose desde abajo; el colchón inferior evita que la máscara
+				   recorte descendentes. La segunda línea entra con sangría: la diagonal
+				   rompe el bloque simétrico y firma la composición. */
 				SLOGAN.map((linea, i) => (
-					<span data-anim class="block">
-						{i === SLOGAN.length - 1 ? <em class="font-serif font-light italic">{linea}</em> : linea}
+					<span
+						class:list={[
+							'block overflow-hidden pb-[0.08em] -mb-[0.08em]',
+							i < SLOGAN.length - 1 ? 'text-seda' : 'md:ml-[1.1em]',
+						]}
+					>
+						<span data-linea class="block">
+							{linea}
+						</span>
 					</span>
 				))
 			}
 		</h1>
 
-		<div class="mt-10 flex flex-col gap-10 border-t border-seda/15 pt-8 lg:flex-row lg:items-end lg:justify-between">
-			<p data-anim class="max-w-[38ch] text-lg leading-snug text-seda lg:text-xl">
-				{SUBTITULAR}
-			</p>
+		<div class="mt-12 grid gap-10 border-t border-seda/15 pt-9 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] lg:gap-24">
+			<div class="flex flex-col justify-between gap-10">
+				<p data-anim class="max-w-[38ch] text-lg leading-snug text-seda lg:text-xl">
+					{SUBTITULAR}
+				</p>
 
-			<div data-anim class="flex flex-wrap items-center gap-3">
-				<a
-					href="#contacto"
-					class="bg-hueso px-7 py-4 font-mono text-[0.72rem] tracking-[0.14em] text-noche uppercase transition-colors duration-300 hover:bg-seda"
-				>
-					Iniciar proyecto
-				</a>
-				<a
-					href="#trabajo"
-					class="border border-seda/35 px-7 py-4 font-mono text-[0.72rem] tracking-[0.14em] text-hueso uppercase transition-colors duration-300 hover:border-seda hover:bg-seda/10"
-				>
-					Ver el trabajo
-				</a>
+				<div data-anim class="flex flex-wrap items-center gap-3">
+					<a
+						href="#contacto"
+						data-magnetico
+						class="group inline-flex items-center gap-3 bg-hueso px-7 py-4 font-mono text-[0.8rem] font-medium tracking-[0.14em] text-noche uppercase transition-colors duration-300 hover:bg-seda"
+					>
+						Iniciar proyecto
+						<Icono
+							nombre="flecha-arriba-derecha"
+							clase="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+						/>
+					</a>
+					<a
+						href="#trabajo"
+						data-magnetico
+						class="inline-flex items-center gap-3 border border-seda/35 px-7 py-4 font-mono text-[0.8rem] font-medium tracking-[0.14em] text-hueso uppercase transition-colors duration-300 hover:border-seda hover:bg-seda/10"
+					>
+						Ver el trabajo
+					</a>
+				</div>
 			</div>
+
+			<!-- Índice de disciplinas: lo que hace el estudio, tipografiado como
+			     pieza — numeración en mono, nombre en serif, filo entre filas. -->
+			<ol class="flex flex-col self-end">
+				{
+					DISCIPLINAS.map((disciplina, i) => (
+						<li
+							data-anim
+							class:list={[
+								'flex items-baseline gap-6 py-3.5 lg:py-4',
+								i > 0 && 'border-t border-seda/12',
+							]}
+						>
+							<span class="font-mono text-[0.8rem] font-medium text-seda-dim tabular-nums">
+								0{i + 1}
+							</span>
+							<span class="font-display text-2xl font-normal tracking-[-0.01em] text-hueso lg:text-3xl">
+								{disciplina}
+							</span>
+						</li>
+					))
+				}
+			</ol>
 		</div>
 	</div>
 
 	<div
 		class="relative z-10 mx-auto flex w-full max-w-[110rem] items-center justify-between border-t border-seda/10 px-6 py-5 lg:px-10"
 	>
-		<span class="etiqueta">Scroll</span>
-		<span class="etiqueta tabular-nums">01 / 09</span>
+		<span class="etiqueta inline-flex items-center gap-2">
+			Scroll
+			<Icono nombre="flecha-abajo" clase="flecha-scroll h-3.5 w-3.5" />
+		</span>
+		<!-- Contador real del carrusel: lo actualiza el mismo script del fundido -->
+		<span class="etiqueta tabular-nums">
+			<span data-diapo-contador>01</span> / {totalDiapos}
+		</span>
 	</div>
 </section>
 
@@ -155,11 +211,32 @@ const imagenes = Object.entries(modulos)
 </style>
 
 <script>
+	import gsap from 'gsap';
+	import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+	gsap.registerPlugin(ScrollTrigger);
+
 	const DURACION = 6000;
 	const diapos = Array.from<HTMLElement>(
 		document.querySelectorAll('#carrusel [data-diapo]'),
 	);
+	const contador = document.querySelector<HTMLElement>('[data-diapo-contador]');
 	const sinMovimiento = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+	// Parallax del fondo: al salir del hero, la fotografía baja a ~1/8 de la
+	// velocidad del scroll y el copy «despega» de ella. Ligado al scroll (no al
+	// tiempo) y solo transform: va por el compositor, sin reflow.
+	gsap.matchMedia().add('(prefers-reduced-motion: no-preference)', () => {
+		gsap.fromTo(
+			'#carrusel',
+			{ yPercent: 0 },
+			{
+				yPercent: 12,
+				ease: 'none',
+				scrollTrigger: { trigger: '#inicio', start: 'top top', end: 'bottom top', scrub: true },
+			},
+		);
+	});
 
 	// Con un solo fotograma no hay carrusel; con movimiento reducido, tampoco.
 	if (diapos.length > 1 && !sinMovimiento) {
@@ -172,6 +249,8 @@ const imagenes = Object.entries(modulos)
 			diapos[actual].dataset.activa = 'false';
 			actual = (actual + 1) % diapos.length;
 			diapos[actual].dataset.activa = 'true';
+
+			if (contador) contador.textContent = String(actual + 1).padStart(2, '0');
 		}, DURACION);
 	}
 </script>

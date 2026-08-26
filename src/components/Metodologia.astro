@@ -24,31 +24,32 @@ const fases = [
 
 <section id="proceso" class="bg-noche py-seccion">
 	<div class="mx-auto max-w-[110rem] px-6 lg:px-10">
+		<!-- Sin data-revela: su entrada es la propia deriva de parallax, y el
+		     reveal genérico animaría el mismo transform y entrarían en conflicto. -->
 		<p
-			data-revela
-			class="mx-auto mb-28 max-w-[22ch] text-center font-serif text-3xl leading-tight font-light text-hueso lg:text-5xl"
+			data-puente
+			class="mx-auto mb-28 max-w-[22ch] text-center font-display text-3xl leading-tight font-normal text-hueso lg:text-5xl"
 			style="text-wrap: balance;"
 		>
-			La creatividad sin estrategia es <em class="italic">decoración</em>.
+			La creatividad sin estrategia es <span class="trazo-bajo">decoración</span>.
 		</p>
 
-		<div data-revela class="mb-14 flex items-baseline justify-between border-b border-seda/15 pb-6">
-			<h2 class="font-display text-3xl font-medium tracking-[-0.02em] text-hueso lg:text-5xl">
+		<div data-revela class="mb-14 border-b border-seda/15 pb-6">
+			<h2 class="font-display text-4xl font-normal tracking-[-0.015em] text-hueso lg:text-6xl">
 				El proceso indie
 			</h2>
-			<span class="etiqueta">06 · Metodología</span>
 		</div>
 
 		<ol class="grid gap-px overflow-hidden border border-seda/10 bg-seda/10 md:grid-cols-2 xl:grid-cols-4">
 			{
 				fases.map((fase, i) => (
-					<li data-revela class="flex min-h-56 flex-col justify-between bg-noche p-7">
+					<li class="fase flex min-h-56 flex-col justify-between bg-noche p-7">
 						<span class="font-mono text-sm text-seda tabular-nums">0{i + 1}</span>
 						<div>
-							<h3 class="font-display text-lg font-medium tracking-[-0.01em] text-hueso">
+							<h3 class="font-sans text-lg font-medium tracking-[-0.01em] text-hueso">
 								{fase.nombre}
 							</h3>
-							<p class="mt-3 text-sm leading-relaxed text-seda">{fase.descripcion}</p>
+							<p class="mt-3 text-base leading-relaxed text-seda">{fase.descripcion}</p>
 						</div>
 					</li>
 				))
@@ -56,3 +57,59 @@ const fases = [
 		</ol>
 	</div>
 </section>
+
+<script>
+	import gsap from 'gsap';
+	import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+	gsap.registerPlugin(ScrollTrigger);
+
+	gsap.matchMedia().add('(prefers-reduced-motion: no-preference)', () => {
+		// La declaración-puente deriva contra el scroll mientras cruza el
+		// viewport: flota respecto al resto de la página, como pieza tipográfica
+		// suelta. Recorrido corto y lineal — profundidad, no efecto.
+		const puente = document.querySelector<HTMLElement>('[data-puente]');
+		if (puente) {
+			gsap.fromTo(
+				puente,
+				{ y: 40 },
+				{
+					y: -40,
+					ease: 'none',
+					scrollTrigger: { trigger: puente, start: 'top bottom', end: 'bottom top', scrub: true },
+				},
+			);
+		}
+
+		// Las cuatro fases entran en secuencia: la numeración es real y el
+		// orden de aparición la subraya.
+		gsap.fromTo(
+			'#proceso .fase',
+			{ opacity: 0, y: 28 },
+			{
+				opacity: 1,
+				y: 0,
+				duration: 0.8,
+				ease: 'power3.out',
+				stagger: 0.1,
+				scrollTrigger: { trigger: '#proceso ol', start: 'top 80%', once: true },
+			},
+		);
+	});
+</script>
+
+<style>
+	/* Elevación por luz, no por sombra: en fondo oscuro la fase activa
+	   se distingue aclarando su superficie un punto. */
+	.fase {
+		transition: background-color 400ms ease;
+	}
+	.fase:hover {
+		background-color: var(--color-carbon);
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.fase {
+			transition: none;
+		}
+	}
+</style>

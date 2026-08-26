@@ -1,9 +1,18 @@
 @import "tailwindcss";
 
+/* Hallmark · redesign in-place · macrostructure: Photographic Marquee (heredada)
+ * tone: luxury-editorial · theme: custom de la casa (acromático cálido)
+ * axes: paper=dark · display=high-contrast-serif · accent=neutral
+ * fonts: Fraunces (display) + Geist (cuerpo/UI) + Geist Mono (etiquetas)
+ * Hallmark · pre-emit critique: P4 H5 E4 S4 R5 V4
+ */
+
 /* ---------------------------------------------------------------------------
-   indie studio — sistema visual
+   indie studio — sistema visual v2
    Acromático cálido a propósito: el Gris Sedoso es el color de marca y el
-   blanco puro es el único brillo. La jerarquía la lleva la tipografía.
+   blanco hueso es el único brillo. La jerarquía la lleva la tipografía:
+   Fraunces (serif de alto contraste) para lo que se afirma,
+   Geist para lo que se lee, Geist Mono para lo que se etiqueta.
 --------------------------------------------------------------------------- */
 
 @theme {
@@ -11,14 +20,14 @@
   --color-noche: #0b0c0b;
   --color-carbon: #17181a;
   --color-seda: #b5b0a6;
-  --color-seda-dim: #6e6b64;
+  --color-seda-dim: #87847c; /* ≥ 4.5:1 sobre noche — apto para texto pequeño */
   --color-hueso: #edeae3;
   --color-tinta: #101110;
 
-  /* Tipografía */
-  --font-display: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
-  --font-serif: "Newsreader", Georgia, "Times New Roman", serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  /* Tipografía — 2+1: display serif, cuerpo sans, mono como registro de etiquetas */
+  --font-display: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-sans: "Geist", "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
 
   /* Ritmo vertical */
   --spacing-seccion: 9rem;
@@ -33,7 +42,7 @@
   body {
     background-color: var(--color-noche);
     color: var(--color-hueso);
-    font-family: var(--font-display);
+    font-family: var(--font-sans);
   }
 
   ::selection {
@@ -63,10 +72,18 @@
   /* Etiqueta mono en versalitas: se repite en todas las secciones */
   .etiqueta {
     font-family: var(--font-mono);
-    font-size: 0.7rem;
-    letter-spacing: 0.18em;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
     color: var(--color-seda-dim);
+  }
+
+  /* Énfasis dentro de un titular: subrayado dibujado en el color del texto,
+     nunca cursiva — el trazo pesa lo mismo que la afirmación. */
+  .trazo-bajo {
+    padding-bottom: 0.04em;
+    border-bottom: 0.045em solid color-mix(in srgb, currentColor 45%, transparent);
   }
 
   /* Retícula editorial de 12 columnas en Gris Sedoso.
@@ -104,16 +121,34 @@
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E");
   }
 
-  /* Estado inicial de los elementos que anima motion.
+  /* Estado inicial de los elementos que anima GSAP.
      .listo lo aplica el script en cuanto arranca, para que sin JS
      (o con JS caído) el contenido quede visible igual. */
   .listo [data-anim] {
     opacity: 0;
   }
-}
 
-@layer components {
   .listo [data-revela] {
     opacity: 0;
+  }
+
+  /* Las líneas del titular del hero arrancan fuera de su máscara. */
+  .listo [data-linea] {
+    transform: translateY(110%);
+  }
+
+  /* Flecha de scroll del hero: un empuje suave y periódico hacia abajo.
+     La regla global de prefers-reduced-motion ya la deja quieta. */
+  @keyframes empuje-abajo {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(4px);
+    }
+  }
+  .flecha-scroll {
+    animation: empuje-abajo 2.4s ease-in-out infinite;
   }
 }

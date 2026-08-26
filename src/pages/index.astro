@@ -13,46 +13,122 @@ import Footer from '../components/Footer.astro';
 
 <Layout>
 	<Header />
-	<main id="contenido">
-		<Hero />
-		<Manifiesto />
-		<TheWork />
-		<Servicios />
-		<PruebaSocial />
-		<Metodologia />
-		<Contacto />
-	</main>
-	<Footer />
+	<!-- ScrollSmoother transforma el contenido: todo lo `fixed` (header y menú
+	     móvil) vive fuera del wrapper para no quedar atrapado en el transform. -->
+	<div id="smooth-wrapper">
+		<div id="smooth-content">
+			<main id="contenido">
+				<Hero />
+				<Manifiesto />
+				<TheWork />
+				<Servicios />
+				<PruebaSocial />
+				<Metodologia />
+				<Contacto />
+			</main>
+			<Footer />
+		</div>
+	</div>
 </Layout>
 
 <script>
-	import { animate, inView, stagger } from 'motion';
+	import gsap from 'gsap';
+	import { ScrollTrigger } from 'gsap/ScrollTrigger';
+	import { ScrollSmoother } from 'gsap/ScrollSmoother';
 
-	const sinMovimiento = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+	gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
 
-	if (!sinMovimiento) {
+	const mm = gsap.matchMedia();
+
+	mm.add('(prefers-reduced-motion: no-preference)', () => {
 		// Ocultamos sólo ahora: si el script no llega a correr, el contenido
 		// se queda visible en lugar de desaparecer.
 		document.documentElement.classList.add('listo');
 
-		// Entrada del hero: una sola secuencia orquestada, no efectos sueltos.
-		animate(
-			'#inicio [data-anim]',
-			{ opacity: [0, 1], transform: ['translateY(1.25rem)', 'translateY(0)'] },
-			{ duration: 0.9, delay: stagger(0.09, { startDelay: 0.15 }), ease: [0.16, 1, 0.3, 1] },
-		);
+		// El scroll suave pasa a manos de GSAP; el nativo de CSS lo duplicaría.
+		document.documentElement.style.scrollBehavior = 'auto';
 
-		// Manifiesto: se revela al entrar en pantalla, una sola vez.
-		inView(
-			'[data-revela]',
-			(elemento) => {
-				animate(
-					elemento,
-					{ opacity: [0, 1], transform: ['translateY(1.5rem)', 'translateY(0)'] },
-					{ duration: 1, ease: [0.16, 1, 0.3, 1] },
-				);
-			},
-			{ amount: 0.35 },
-		);
-	}
+		const suavizador = ScrollSmoother.create({
+			wrapper: '#smooth-wrapper',
+			content: '#smooth-content',
+			smooth: 1,
+			effects: false,
+			smoothTouch: false,
+			// Con una sección fijada (galería de The Work), el scroll normalizado
+			// evita saltos del pin en móvil por el redimensionado de la barra
+			// de direcciones.
+			normalizeScroll: true,
+			ignoreMobileResize: true,
+		});
+
+		// Con el contenido transformado, los anclas pasan por el suavizador.
+		// El salto de accesibilidad (#contenido) se queda nativo e instantáneo.
+		document.addEventListener('click', (evento) => {
+			if (!(evento.target instanceof Element)) return;
+			const enlace = evento.target.closest('a[href^="#"]');
+			if (!enlace) return;
+			const href = enlace.getAttribute('href')!;
+			if (href === '#contenido' || href.length < 2) return;
+			const destino = document.querySelector(href);
+			if (!destino) return;
+			evento.preventDefault();
+			suavizador.scrollTo(destino, true);
+			history.pushState(null, '', href);
+		});
+
+		// Entrada del hero: el titular sube enmascarado línea a línea
+		// y el resto llega en cascada, una sola secuencia orquestada.
+		//
+		// y: 0 explícito en el estado inicial: el translateY(110%) del CSS de
+		// arranque se computa a píxeles y GSAP lo absorbería como un `y` fijo
+		// separado del yPercent — la línea quedaría fuera de su máscara para
+		// siempre. Pisándolo con 0, el único desplazamiento es el yPercent.
+		gsap
+			.timeline({ defaults: { ease: 'power4.out' } })
+			.fromTo(
+				'#inicio [data-linea]',
+				{ y: 0, yPercent: 110 },
+				{ yPercent: 0, duration: 1.2, stagger: 0.14, delay: 0.15 },
+			)
+			.fromTo(
+				'#inicio [data-anim]',
+				{ opacity: 0, y: 18 },
+				{ opacity: 1, y: 0, duration: 0.9, stagger: 0.09 },
+				'-=0.8',
+			);
+
+		// Revelado por sección: una vez, y el contenido se queda quieto.
+		document.querySelectorAll<HTMLElement>('[data-revela]').forEach((elemento) => {
+			gsap.fromTo(
+				elemento,
+				{ opacity: 0, y: 24 },
+				{
+					opacity: 1,
+					y: 0,
+					duration: 1,
+					ease: 'power3.out',
+					scrollTrigger: { trigger: elemento, start: 'top 82%', once: true },
+				},
+			);
+		});
+	});
+
+	// Botones magnéticos: el CTA se inclina hacia el cursor y vuelve solo.
+	// Puntero fino únicamente — en táctil no existe el hover.
+	mm.add('(pointer: fine) and (prefers-reduced-motion: no-preference)', () => {
+		document.querySelectorAll<HTMLElement>('[data-magnetico]').forEach((boton) => {
+			const irX = gsap.quickTo(boton, 'x', { duration: 0.4, ease: 'power3.out' });
+			const irY = gsap.quickTo(boton, 'y', { duration: 0.4, ease: 'power3.out' });
+
+			boton.addEventListener('mousemove', (evento) => {
+				const caja = boton.getBoundingClientRect();
+				irX((evento.clientX - caja.left - caja.width / 2) * 0.25);
+				irY((evento.clientY - caja.top - caja.height / 2) * 0.35);
+			});
+			boton.addEventListener('mouseleave', () => {
+				irX(0);
+				irY(0);
+			});
+		});
+	});
 </script>
