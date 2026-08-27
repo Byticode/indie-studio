@@ -1,5 +1,16 @@
 [
   {
+    "date": "2026-08-27",
+    "macrostructure": "Photographic Marquee (heredada)",
+    "theme": "custom",
+    "theme_axes": "dark / high-contrast-serif / neutral",
+    "vibe": "orgánico fluido, lujo editorial sin reglas rectas",
+    "enrichment": "none",
+    "scope": "component (footer)",
+    "footer": "Ft4 colofón denso + ancla Ft1 mastón",
+    "brief": "indie studio · redesign del pie: colofón de libro en lugar de filas de enlaces; borde superior en curva dibujada; foco en tinta sobre papel"
+  },
+  {
     "date": "2026-08-26",
     "macrostructure": "Photographic Marquee",
     "theme": "custom",

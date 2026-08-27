@@ -1,69 +1,177 @@
 ---
 import Icono from './Icono.astro';
 
-// §09 Footer — cierre y última red de seguridad. Fondo invertido respecto
-// al cuerpo: quien llegó hasta aquí sin escribir todavía tiene un camino.
+// §09 Footer — el colofón. Cierre y última red de seguridad: quien llegó
+// hasta aquí sin escribir todavía tiene un camino.
+//
+// Arquetipo Ft4 (colofón denso) sobre ancla Ft1 (mastón). En lugar de las tres
+// filas de enlaces pequeños —social, legal, volver arriba— que son la huella de
+// cualquier pie generado, la página se cierra como se cierra un libro: qué la
+// compone, con qué está hecha, a quién escribir. El mono deja de ser solo
+// etiqueta y pasa a leerse como prosa, y los enlaces legales viven dentro de
+// esa prosa en vez de formar una fila propia.
+//
+// Tres movimientos, de mayor a menor carga: la despedida (el mensaje y el
+// correo), el colofón (la letra pequeña que sí se lee) y la firma (el
+// logotipo cerrando, que es lo único que puede permitirse ser grande sin
+// informar de nada).
+//
+// El borde superior es curva dibujada, no arista recta: el papel hueso sube
+// sobre la noche con el mismo arco asimétrico de .trazo-bajo. Era la única
+// regla del sistema v2 que al pie le faltaba.
+//
+// PENDIENTE: correo, ciudad y perfiles sociales reales del estudio.
 const año = new Date().getFullYear();
 ---
 
-<footer class="bg-hueso text-tinta">
-	<div class="mx-auto max-w-[110rem] px-6 pt-20 pb-10 lg:px-10">
-		<div class="flex flex-col gap-14 pb-16 lg:flex-row lg:items-end lg:justify-between">
-			<p class="font-display text-5xl font-medium tracking-[-0.02em] lg:text-7xl">
-				indie<span class="text-tinta/45"> studio</span>
+<footer class="bg-noche">
+	{/* La transición noche → hueso es el arco de la casa, estirado a lo ancho.
+	    preserveAspectRatio="none" mantiene la curva baja en pantallas anchas. */}
+	<svg
+		class="block h-[clamp(2.5rem,7vw,7rem)] w-full"
+		viewBox="0 0 1440 120"
+		preserveAspectRatio="none"
+		aria-hidden="true"
+	>
+		<path d="M0,120 L0,74 C 320,10 900,2 1440,44 L1440,120 Z" fill="var(--color-hueso)" />
+	</svg>
+
+	<div class="bg-hueso text-tinta">
+		<div class="mx-auto max-w-[110rem] px-6 pb-12 lg:px-10">
+			<!-- 1 · La despedida — el mensaje manda; el correo es la acción -->
+			<div
+				data-revela
+				class="flex flex-col gap-12 pb-24 lg:flex-row lg:items-end lg:justify-between lg:gap-20"
+			>
+				<p
+					class="max-w-[17ch] min-w-0 font-display text-3xl leading-[1.15] font-normal tracking-[-0.02em] text-balance wrap-anywhere sm:text-4xl lg:text-5xl"
+				>
+					Si has llegado hasta abajo, ya tenemos algo de qué <span class="trazo-bajo">hablar</span>.
+				</p>
+
+				<div class="flex flex-col items-start gap-4 lg:items-end">
+					<a
+						href="mailto:hola@indiestudio.com"
+						class="correo trazo-bajo font-display text-xl wrap-anywhere sm:text-2xl lg:text-3xl"
+					>
+						hola@indiestudio.com
+					</a>
+					<span class="etiqueta text-tinta/70">Ciudad · Disponibles en remoto</span>
+				</div>
+			</div>
+
+			<!-- 2 · El colofón — la letra pequeña, en prosa, con los legales dentro -->
+			<p class="colofon max-w-[70ch] font-mono text-[0.85rem] leading-[1.85] text-tinta/70">
+				© {año} indie studio. Compuesto en Fraunces, Geist y Geist Mono; hecho con
+				Astro, a mano y sin plantilla. Puedes consultar el <a href="/legal">aviso legal</a>,
+				la <a href="/privacidad">política de privacidad</a> y el <a href="/cookies">uso de
+				cookies</a>.
 			</p>
-			<div class="flex flex-col gap-2 lg:text-right">
-				<!-- PENDIENTE: correo y ciudad reales del estudio -->
-				<a href="mailto:hola@indiestudio.com" class="text-xl transition-colors duration-300 hover:text-tinta/60">
-					hola@indiestudio.com
-				</a>
-				<span class="etiqueta text-tinta/60">Ciudad · Disponibles en remoto</span>
+
+			<!-- 3 · La firma — el logotipo cierra, ya sin competir con nada -->
+			<div
+				data-revela
+				class="mt-24 flex flex-col gap-12 lg:flex-row lg:items-end lg:justify-between"
+			>
+				<div class="min-w-0">
+					<p
+						class="font-display text-4xl leading-none font-medium tracking-[-0.025em] wrap-anywhere sm:text-6xl lg:text-7xl"
+					>
+						indie<span class="text-tinta/60"> studio</span>
+					</p>
+					<p class="mt-5 text-base text-tinta/70">Independientes desde el primer día</p>
+				</div>
+
+				<ul class="flex flex-wrap items-center gap-3">
+					<li>
+						<a href="https://instagram.com" rel="noopener" target="_blank" class="pildora">
+							<Icono nombre="instagram" clase="text-base" />
+							Instagram
+						</a>
+					</li>
+					<li>
+						<a href="https://linkedin.com" rel="noopener" target="_blank" class="pildora">
+							<Icono nombre="linkedin" clase="text-base" />
+							LinkedIn
+						</a>
+					</li>
+					<li>
+						<a href="#inicio" class="pildora">
+							<Icono nombre="flecha-arriba" clase="text-base" />
+							Arriba
+						</a>
+					</li>
+				</ul>
 			</div>
 		</div>
-
-		<div class="flex flex-col gap-6 pt-8 md:flex-row md:items-center md:justify-between">
-			<ul class="flex gap-8">
-				<li>
-					<a
-						href="https://instagram.com"
-						rel="noopener"
-						target="_blank"
-						class="etiqueta inline-flex items-center gap-2 text-tinta/70 transition-colors hover:text-tinta"
-					>
-						<Icono nombre="instagram" clase="text-base" />
-						Instagram
-					</a>
-				</li>
-				<li>
-					<a
-						href="https://linkedin.com"
-						rel="noopener"
-						target="_blank"
-						class="etiqueta inline-flex items-center gap-2 text-tinta/70 transition-colors hover:text-tinta"
-					>
-						<Icono nombre="linkedin" clase="text-base" />
-						LinkedIn
-					</a>
-				</li>
-			</ul>
-
-			<ul class="flex flex-wrap gap-x-8 gap-y-2">
-				<li><a href="/legal" class="etiqueta text-tinta/60 transition-colors hover:text-tinta">Aviso legal</a></li>
-				<li><a href="/privacidad" class="etiqueta text-tinta/60 transition-colors hover:text-tinta">Privacidad</a></li>
-				<li><a href="/cookies" class="etiqueta text-tinta/60 transition-colors hover:text-tinta">Cookies</a></li>
-			</ul>
-
-			<a
-				href="#inicio"
-				class="etiqueta inline-flex items-center gap-2 text-tinta/70 transition-colors hover:text-tinta"
-			>
-				<Icono nombre="flecha-arriba" clase="text-base" />
-				Volver arriba
-			</a>
-		</div>
-
-		<p class="etiqueta mt-14 text-tinta/50">
-			© {año} indie studio · Independientes desde el primer día
-		</p>
 	</div>
 </footer>
+
+<style>
+	/* Hallmark · genre: editorial · macrostructure: Photographic Marquee (heredada)
+	 * theme: custom de la casa · footer: Ft4 colofón denso + ancla Ft1 mastón
+	 * enrichment: none · scope: redesign in-place de un componente
+	 * Hallmark · pre-emit critique: P4 H5 E5 S5 R4 V4
+	 */
+
+	/* Píldora: la misma forma que el CTA del header y del formulario, en su
+	   versión sobre papel. min-height 2.75rem = 44 px, objetivo táctil AA. */
+	.pildora {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		min-height: 2.75rem;
+		padding: 0 1.25rem;
+		border-radius: 9999px;
+		background: color-mix(in srgb, var(--color-tinta) 8%, transparent);
+		font-family: var(--font-mono);
+		font-size: 0.8rem;
+		font-weight: 500;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		color: var(--color-tinta);
+		white-space: nowrap;
+		transition:
+			background-color 300ms var(--ease-ui),
+			color 300ms var(--ease-ui);
+	}
+	.pildora:hover {
+		background: var(--color-tinta);
+		color: var(--color-hueso);
+	}
+	/* Acuse de pulsación: 1 px, instantáneo. No es transición, así que no
+	   necesita alternativa de movimiento reducido. */
+	.pildora:active {
+		transform: translateY(1px);
+	}
+
+	/* El correo lleva el arco de .trazo-bajo en vez de un subrayado recto; al
+	   pasar por encima el trazo se cierra del todo. Gana en especificidad a la
+	   regla global porque Astro añade el atributo de ámbito al selector. */
+	.correo::after {
+		transition: opacity 300ms var(--ease-ui);
+	}
+	.correo:hover::after {
+		opacity: 1;
+	}
+
+	/* Los legales son enlaces dentro de la prosa del colofón: tinta plena para
+	   separarse del cuerpo al 70 %, y sin partirse en dos líneas. */
+	.colofon a {
+		color: var(--color-tinta);
+		text-decoration: underline;
+		text-decoration-color: color-mix(in srgb, var(--color-tinta) 30%, transparent);
+		text-underline-offset: 0.25em;
+		white-space: nowrap;
+		transition: text-decoration-color 300ms var(--ease-ui);
+	}
+	.colofon a:hover {
+		text-decoration-color: var(--color-tinta);
+	}
+
+	/* El anillo de foco global va en Gris Sedoso: 9:1 sobre noche, pero 1.8:1
+	   sobre el hueso de este pie —invisible—. Sobre papel tiene que ser tinta. */
+	a:focus-visible {
+		outline-color: var(--color-tinta);
+	}
+</style>

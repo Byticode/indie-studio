@@ -32,6 +32,11 @@
 
   /* Ritmo vertical */
   --spacing-seccion: 9rem;
+
+  /* Curva de las transiciones de interfaz. Es la que Tailwind ya aplica en
+     `transition-colors`, con nombre: así el CSS escrito a mano suena igual
+     que las utilidades y nada cae en la `ease` por defecto del navegador. */
+  --ease-ui: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @layer base {
