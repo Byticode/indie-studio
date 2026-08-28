@@ -1,5 +1,6 @@
 ---
 import Icono from './Icono.astro';
+import { CORREO, REDES } from '../datos/estudio';
 
 // §09 Footer — el colofón. Cierre y última red de seguridad: quien llegó
 // hasta aquí sin escribir todavía tiene un camino.
@@ -20,7 +21,8 @@ import Icono from './Icono.astro';
 // sobre la noche con el mismo arco asimétrico de .trazo-bajo. Era la única
 // regla del sistema v2 que al pie le faltaba.
 //
-// PENDIENTE: correo, ciudad y perfiles sociales reales del estudio.
+// PENDIENTE: ciudad real del estudio y URL de cada perfil (viven en
+// src/datos/estudio.ts, no aquí).
 const año = new Date().getFullYear();
 ---
 
@@ -51,10 +53,10 @@ const año = new Date().getFullYear();
 
 				<div class="flex flex-col items-start gap-4 lg:items-end">
 					<a
-						href="mailto:hola@indiestudio.com"
+						href={`mailto:${CORREO}`}
 						class="correo trazo-bajo font-display text-xl wrap-anywhere sm:text-2xl lg:text-3xl"
 					>
-						hola@indiestudio.com
+						{CORREO}
 					</a>
 					<span class="etiqueta text-tinta/70">Ciudad · Disponibles en remoto</span>
 				</div>
@@ -83,18 +85,16 @@ const año = new Date().getFullYear();
 				</div>
 
 				<ul class="flex flex-wrap items-center gap-3">
-					<li>
-						<a href="https://instagram.com" rel="noopener" target="_blank" class="pildora">
-							<Icono nombre="instagram" clase="text-base" />
-							Instagram
-						</a>
-					</li>
-					<li>
-						<a href="https://linkedin.com" rel="noopener" target="_blank" class="pildora">
-							<Icono nombre="linkedin" clase="text-base" />
-							LinkedIn
-						</a>
-					</li>
+					{
+						REDES.map((red) => (
+							<li>
+								<a href={red.href} rel="noopener" target="_blank" class="pildora">
+									<Icono nombre={red.icono} clase="text-base" />
+									{red.nombre}
+								</a>
+							</li>
+						))
+					}
 					<li>
 						<a href="#inicio" class="pildora">
 							<Icono nombre="flecha-arriba" clase="text-base" />

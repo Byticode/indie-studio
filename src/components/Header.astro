@@ -1,5 +1,6 @@
 ---
 import Icono from "./Icono.astro";
+import { REDES } from "../datos/estudio";
 
 // §01 Navegación — su única obligación es que el CTA de contacto
 // nunca quede a más de un clic, en cualquier punto del scroll.
@@ -27,7 +28,30 @@ const enlaces = [
             indie<span class="text-seda-dim"> studio</span>
         </a>
 
-        <div class="flex items-center gap-4">
+        <div class="flex items-center gap-5">
+            <!-- Con cuatro redes las etiquetas de texto ya no caben sin
+                 convertir la barra en una lista de enlaces: aquí van solo los
+                 glifos y el nombre lo lleva aria-label. El pie sí las nombra,
+                 que es donde toca. La píldora rellena sigue siendo exclusiva
+                 del CTA, así el header conserva una única acción primaria. -->
+            <ul class="hidden items-center gap-1 md:flex">
+                {
+                    REDES.map((red) => (
+                        <li>
+                            <a
+                                href={red.href}
+                                rel="noopener"
+                                target="_blank"
+                                aria-label={red.nombre}
+                                class="inline-flex p-2 text-seda transition-colors duration-300 hover:text-hueso"
+                            >
+                                <Icono nombre={red.icono} clase="text-2xl" />
+                            </a>
+                        </li>
+                    ))
+                }
+            </ul>
+
             <a
                 href="#contacto"
                 data-magnetico
@@ -72,13 +96,36 @@ const enlaces = [
             ))
         }
     </ul>
-    <a
-        href="#contacto"
-        data-cierra-menu
-        class="block rounded-full bg-hueso py-4 text-center font-mono text-[0.85rem] font-medium tracking-[0.14em] text-noche uppercase"
-    >
-        Iniciar proyecto
-    </a>
+    <div class="flex flex-col gap-6">
+        <!-- En el menú sí caben nombradas, y con py-3 cada fila llega a los
+             44 px de objetivo táctil. -->
+        <ul class="flex flex-wrap gap-x-7 gap-y-1">
+            {
+                REDES.map((red) => (
+                    <li>
+                        <a
+                            href={red.href}
+                            rel="noopener"
+                            target="_blank"
+                            data-cierra-menu
+                            class="etiqueta inline-flex items-center gap-2.5 py-3 whitespace-nowrap text-seda transition-colors duration-300 hover:text-hueso"
+                        >
+                            <Icono nombre={red.icono} clase="text-base" />
+                            {red.nombre}
+                        </a>
+                    </li>
+                ))
+            }
+        </ul>
+
+        <a
+            href="#contacto"
+            data-cierra-menu
+            class="block rounded-full bg-hueso py-4 text-center font-mono text-[0.85rem] font-medium tracking-[0.14em] text-noche uppercase"
+        >
+            Iniciar proyecto
+        </a>
+    </div>
 </div>
 
 <script>

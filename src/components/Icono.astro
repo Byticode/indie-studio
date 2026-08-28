@@ -9,8 +9,10 @@ type Nombre =
 	| 'chevron-abajo'
 	| 'menu'
 	| 'cerrar'
+	| 'tiktok'
 	| 'instagram'
-	| 'linkedin';
+	| 'linkedin'
+	| 'behance';
 
 interface Props {
 	nombre: Nombre;
@@ -26,8 +28,10 @@ const iconos: Record<Nombre, string> = {
 	'chevron-abajo': 'ti-chevron-down',
 	menu: 'ti-menu-2',
 	cerrar: 'ti-x',
+	tiktok: 'ti-brand-tiktok',
 	instagram: 'ti-brand-instagram',
 	linkedin: 'ti-brand-linkedin',
+	behance: 'ti-brand-behance',
 };
 ---
 
