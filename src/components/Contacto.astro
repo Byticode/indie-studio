@@ -1,20 +1,17 @@
 ---
 import Icono from './Icono.astro';
+import { CORREO, DESAFIOS, PRESUPUESTOS } from '../datos/estudio';
 
 // §08 Cualificación y Contacto — nunca solo un correo: el formulario pide
 // contexto antes de la conversación y filtra a quien no encaja.
 //
-// PENDIENTE: conectar el envío (endpoint de Astro, Formspree o similar).
-// Decisión abierta de la arquitectura: el campo de presupuesto cualifica pero
-// cuesta envíos; la alternativa es preguntarlo en el correo de respuesta.
-const desafios = [
-	'Mi marca no refleja lo que realmente somos',
-	'Tengo tráfico, pero no convierte',
-	'Necesito contenido que sostenga la atención',
-	'Voy a lanzar algo nuevo',
-];
-
-const presupuestos = ['$1,000 – $3,000', '$3,000 – $10,000', 'Más de $10,000', 'Prefiero hablarlo'];
+// El envío va a /api/contacto (única ruta con servidor del sitio). Mejora
+// progresiva: sin JS el navegador hace el POST nativo y aterriza en /gracias;
+// con JS se intercepta, se valida en línea y no se recarga nada. Las listas de
+// opciones vienen del módulo compartido porque el servidor valida contra ellas.
+//
+// DECISIÓN ABIERTA (sin tocar): el campo de presupuesto cualifica pero cuesta
+// envíos; la alternativa es preguntarlo en el correo de respuesta.
 ---
 
 <section id="contacto" class="bg-noche py-seccion">
@@ -34,70 +31,253 @@ const presupuestos = ['$1,000 – $3,000', '$3,000 – $10,000', 'Más de $10,00
 			</p>
 		</div>
 
-		<form data-revela class="flex flex-col gap-9" method="post" action="#contacto">
-			<div class="grid gap-9 sm:grid-cols-2">
-				<label class="campo">
-					<span class="etiqueta">Nombre</span>
-					<input type="text" name="nombre" required autocomplete="name" />
-				</label>
-				<label class="campo">
-					<span class="etiqueta">Empresa</span>
-					<input type="text" name="empresa" required autocomplete="organization" />
-				</label>
-			</div>
-
-			<label class="campo">
-				<span class="etiqueta">Email corporativo</span>
-				<input type="email" name="email" required autocomplete="email" />
-			</label>
-
-			<label class="campo">
-				<span class="etiqueta">¿Cuál es tu mayor desafío actual?</span>
-				<span class="selector">
-					<select name="desafio" required>
-						<option value="" selected disabled>Selecciona una opción</option>
-						{desafios.map((desafio) => <option value={desafio}>{desafio}</option>)}
-					</select>
-					<Icono
-						nombre="chevron-abajo"
-						clase="selector-icono pointer-events-none text-base text-seda-dim"
-					/>
-				</span>
-			</label>
-
-			<label class="campo">
-				<span class="etiqueta">Rango de presupuesto estimado</span>
-				<span class="selector">
-					<select name="presupuesto">
-						<option value="" selected disabled>Selecciona una opción</option>
-						{presupuestos.map((rango) => <option value={rango}>{rango}</option>)}
-					</select>
-					<Icono
-						nombre="chevron-abajo"
-						clase="selector-icono pointer-events-none text-base text-seda-dim"
-					/>
-				</span>
-			</label>
-
-			<label class="campo">
-				<span class="etiqueta">Cuéntanos brevemente (opcional)</span>
-				<textarea name="mensaje" rows="3"></textarea>
-			</label>
-
-			<button
-				type="submit"
-				data-magnetico
-				class="group inline-flex items-center gap-3 self-start rounded-full bg-hueso px-8 py-4 font-mono text-[0.8rem] font-medium tracking-[0.14em] text-noche uppercase transition-colors duration-300 hover:bg-seda"
+		<div data-revela>
+			<form
+				id="form-contacto"
+				class="flex flex-col gap-9"
+				method="post"
+				action="/api/contacto"
 			>
-				Enviar propuesta
-				<Icono
-					nombre="flecha-arriba-derecha"
-					clase="text-sm transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-				/>
-			</button>
-		</form>
+				{/* Campo trampa: fuera de pantalla en lugar de display:none, que
+				    algunos bots saltan. Sin tabulación y fuera del árbol de
+				    accesibilidad, así que ninguna persona llega a él. */}
+				<div class="trampa" aria-hidden="true">
+					<label>
+						No rellenes este campo
+						<input type="text" name="sitio-web" tabindex="-1" autocomplete="off" />
+					</label>
+				</div>
+
+				{/* La rellena el JS al cargar. Sin JS va vacía y el servidor
+				    simplemente no aplica la comprobación de tiempo. */}
+				<input type="hidden" name="abierto" data-abierto value="" />
+
+				<div class="grid gap-9 sm:grid-cols-2">
+					<label class="campo">
+						<span class="etiqueta">Nombre</span>
+						<input
+							type="text"
+							name="nombre"
+							required
+							autocomplete="name"
+							aria-describedby="error-nombre"
+						/>
+						<span class="error" id="error-nombre" data-error-de="nombre"></span>
+					</label>
+					<label class="campo">
+						<span class="etiqueta">Empresa</span>
+						<input
+							type="text"
+							name="empresa"
+							required
+							autocomplete="organization"
+							aria-describedby="error-empresa"
+						/>
+						<span class="error" id="error-empresa" data-error-de="empresa"></span>
+					</label>
+				</div>
+
+				<label class="campo">
+					<span class="etiqueta">Email corporativo</span>
+					<input
+						type="email"
+						name="email"
+						required
+						autocomplete="email"
+						aria-describedby="error-email"
+					/>
+					<span class="error" id="error-email" data-error-de="email"></span>
+				</label>
+
+				<label class="campo">
+					<span class="etiqueta">¿Cuál es tu mayor desafío actual?</span>
+					<span class="selector">
+						<select name="desafio" required aria-describedby="error-desafio">
+							<option value="" selected disabled>Selecciona una opción</option>
+							{DESAFIOS.map((desafio) => <option value={desafio}>{desafio}</option>)}
+						</select>
+						<Icono
+							nombre="chevron-abajo"
+							clase="selector-icono pointer-events-none text-base text-seda-dim"
+						/>
+					</span>
+					<span class="error" id="error-desafio" data-error-de="desafio"></span>
+				</label>
+
+				<label class="campo">
+					<span class="etiqueta">Rango de presupuesto estimado</span>
+					<span class="selector">
+						<select name="presupuesto" aria-describedby="error-presupuesto">
+							<option value="" selected disabled>Selecciona una opción</option>
+							{PRESUPUESTOS.map((rango) => <option value={rango}>{rango}</option>)}
+						</select>
+						<Icono
+							nombre="chevron-abajo"
+							clase="selector-icono pointer-events-none text-base text-seda-dim"
+						/>
+					</span>
+					<span class="error" id="error-presupuesto" data-error-de="presupuesto"></span>
+				</label>
+
+				<label class="campo">
+					<span class="etiqueta">Cuéntanos brevemente (opcional)</span>
+					<textarea name="mensaje" rows="3" aria-describedby="error-mensaje"></textarea>
+					<span class="error" id="error-mensaje" data-error-de="mensaje"></span>
+				</label>
+
+				<div class="flex flex-col gap-4">
+					<button
+						type="submit"
+						data-magnetico
+						data-enviar
+						class="group inline-flex min-h-11 items-center gap-3 self-start rounded-full bg-hueso px-8 py-4 font-mono text-[0.8rem] font-medium tracking-[0.14em] whitespace-nowrap text-noche uppercase transition-colors duration-300 hover:bg-seda disabled:cursor-not-allowed disabled:bg-seda-dim"
+					>
+						<span data-boton-texto>Enviar propuesta</span>
+						<Icono
+							nombre="flecha-arriba-derecha"
+							clase="text-sm transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+						/>
+					</button>
+
+					{/* Sin esta región, un envío por JS es mudo para quien no mira
+					    la pantalla. :empty la oculta mientras no haya nada. */}
+					<p class="estado" data-estado role="status" aria-live="polite"></p>
+				</div>
+			</form>
+
+			{/* Acuse en el sitio del formulario. Nada de notificación
+			    celebratoria: el mensaje se queda donde estaba el formulario. */}
+			<div data-exito hidden tabindex="-1" class="flex flex-col gap-5">
+				<p class="font-display text-3xl leading-[1.15] font-normal tracking-[-0.02em] text-hueso lg:text-4xl">
+					Recibido. Lo tenemos <span class="trazo-bajo">delante</span>.
+				</p>
+				<p class="max-w-[44ch] text-lg leading-relaxed text-seda">
+					Respondemos en 48 horas laborables. Si prefieres escribirnos directamente,
+					estamos en <a href={`mailto:${CORREO}`} class="text-hueso underline underline-offset-4">{CORREO}</a>.
+				</p>
+			</div>
+		</div>
 	</div>
 </section>
+
+<script>
+	const formulario = document.querySelector<HTMLFormElement>('#form-contacto');
+
+	if (formulario) {
+		const boton = formulario.querySelector<HTMLButtonElement>('[data-enviar]')!;
+		const textoBoton = boton.querySelector<HTMLElement>('[data-boton-texto]')!;
+		const estado = formulario.querySelector<HTMLElement>('[data-estado]')!;
+		const marca = formulario.querySelector<HTMLInputElement>('[data-abierto]')!;
+		const exito = document.querySelector<HTMLElement>('[data-exito]')!;
+
+		// Desde aquí manda la validación propia: sin esto el navegador bloquea
+		// el envío con su propio globo y el manejador de abajo nunca corre.
+		// checkValidity() sigue funcionando igual con noValidate puesto.
+		formulario.noValidate = true;
+
+		// Marca de tiempo para la comprobación antibot del servidor.
+		marca.value = String(Date.now());
+
+		// Mensajes de la casa, en español y con la misma voz que el resto:
+		// los del navegador cambian según navegador e idioma del sistema.
+		const MENSAJES: Record<string, string> = {
+			nombre: 'Dinos cómo te llamas.',
+			empresa: 'Falta el nombre de la empresa.',
+			email: 'Necesitamos un correo válido para responderte.',
+			desafio: 'Elige el desafío que más se acerque.',
+		};
+
+		type Control = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
+
+		const controles = () =>
+			Array.from(
+				formulario.querySelectorAll<Control>('input[name], select[name], textarea[name]'),
+			).filter((control) => control.type !== 'hidden' && control.name !== 'sitio-web');
+
+		const pintarError = (campo: string, mensaje: string) => {
+			const nodo = formulario.querySelector<HTMLElement>(`[data-error-de="${campo}"]`);
+			if (nodo) nodo.textContent = mensaje;
+			formulario
+				.querySelector<Control>(`[name="${campo}"]`)
+				?.setAttribute('aria-invalid', 'true');
+		};
+
+		const limpiarError = (campo: string) => {
+			const nodo = formulario.querySelector<HTMLElement>(`[data-error-de="${campo}"]`);
+			if (nodo) nodo.textContent = '';
+			formulario.querySelector<Control>(`[name="${campo}"]`)?.removeAttribute('aria-invalid');
+		};
+
+		const limpiarTodo = () => {
+			controles().forEach((control) => limpiarError(control.name));
+			estado.textContent = '';
+		};
+
+		// El error de un campo desaparece en cuanto se toca: mantenerlo mientras
+		// se corrige es regañar a alguien que ya está haciendo caso.
+		formulario.addEventListener('input', (evento) => {
+			const destino = evento.target as Control;
+			if (destino?.name) limpiarError(destino.name);
+		});
+		formulario.addEventListener('change', (evento) => {
+			const destino = evento.target as Control;
+			if (destino?.name) limpiarError(destino.name);
+		});
+
+		formulario.addEventListener('submit', async (evento) => {
+			evento.preventDefault();
+			limpiarTodo();
+
+			const invalidos = controles().filter((control) => !control.checkValidity());
+			if (invalidos.length > 0) {
+				invalidos.forEach((control) =>
+					pintarError(control.name, MENSAJES[control.name] ?? control.validationMessage),
+				);
+				invalidos[0].focus();
+				return;
+			}
+
+			boton.disabled = true;
+			textoBoton.textContent = 'Enviando…';
+
+			try {
+				const respuesta = await fetch(formulario.action, {
+					method: 'POST',
+					body: new FormData(formulario),
+					// Es lo que le dice al endpoint que responda JSON en vez de
+					// redirigir a /gracias.
+					headers: { Accept: 'application/json' },
+				});
+
+				const cuerpo = await respuesta.json().catch(() => ({}) as Record<string, unknown>);
+
+				if (respuesta.ok && cuerpo.ok) {
+					formulario.hidden = true;
+					exito.hidden = false;
+					// Mueve el foco al acuse: si no, quien navega con teclado se
+					// queda en un botón que acaba de desaparecer.
+					exito.focus();
+					return;
+				}
+
+				const errores = cuerpo.errores as Record<string, string> | undefined;
+				if (errores) {
+					Object.entries(errores).forEach(([campo, mensaje]) => pintarError(campo, mensaje));
+					formulario.querySelector<Control>('[aria-invalid="true"]')?.focus();
+				}
+
+				estado.textContent =
+					(cuerpo.mensaje as string | undefined) ??
+					'No pudimos enviarlo. Inténtalo de nuevo en un momento.';
+			} catch {
+				estado.textContent = 'No hay conexión con el servidor. Inténtalo de nuevo.';
+			} finally {
+				boton.disabled = false;
+				textoBoton.textContent = 'Enviar propuesta';
+			}
+		});
+	}
+</script>
 
 <style>
 	.campo {
@@ -119,7 +299,9 @@ const presupuestos = ['$1,000 – $3,000', '$3,000 – $10,000', 'Más de $10,00
 		font-size: 1rem;
 		color: var(--color-hueso);
 		border-radius: 1.1rem;
-		transition: background-color 300ms ease;
+		transition:
+			background-color 300ms var(--ease-ui),
+			box-shadow 300ms var(--ease-ui);
 	}
 	.campo select {
 		appearance: none;
@@ -139,6 +321,40 @@ const presupuestos = ['$1,000 – $3,000', '$3,000 – $10,000', 'Más de $10,00
 		background-color: color-mix(in srgb, var(--color-carbon) 82%, var(--color-seda));
 	}
 
+	/* Campo en error: el aro sigue el radio del campo, así que no introduce
+	   ninguna recta en un sistema que no las tiene. El color no es el único
+	   portador del estado — debajo va siempre el texto de qué falla. */
+	.campo input[aria-invalid='true'],
+	.campo select[aria-invalid='true'],
+	.campo textarea[aria-invalid='true'] {
+		box-shadow: inset 0 0 0 1px var(--color-seda);
+		background-color: color-mix(in srgb, var(--color-carbon) 88%, var(--color-hueso));
+	}
+
+	/* Los mensajes usan el registro mono de las etiquetas pero en caja baja:
+	   son frases, no rótulos. :empty los quita del flujo mientras no haya nada,
+	   así el formulario no reserva huecos vacíos. */
+	.error,
+	.estado {
+		font-family: var(--font-mono);
+		font-size: 0.8rem;
+		line-height: 1.5;
+		color: var(--color-hueso);
+	}
+	.error:empty,
+	.estado:empty {
+		display: none;
+	}
+
+	/* Campo trampa: fuera de la pantalla, nunca display:none. */
+	.trampa {
+		position: absolute;
+		left: -9999px;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+	}
+
 	/* El chevron sustituye a la flecha nativa del select, en el mismo trazo
 	   que el resto de iconos de la web. */
 	.selector {
@@ -150,5 +366,10 @@ const presupuestos = ['$1,000 – $3,000', '$3,000 – $10,000', 'Más de $10,00
 		right: 1.15rem;
 		top: 50%;
 		transform: translateY(-50%);
+	}
+
+	/* El acuse recibe el foco por JS; no necesita anillo propio. */
+	[data-exito]:focus {
+		outline: none;
 	}
 </style>

@@ -18,3 +18,21 @@ export const REDES = [
 	{ nombre: 'LinkedIn', icono: 'linkedin', href: 'https://linkedin.com' },
 	{ nombre: 'Behance', icono: 'behance', href: 'https://behance.net' },
 ] as const;
+
+// Opciones del formulario de contacto. Viven aquí porque las valida el
+// endpoint del servidor además de pintarlas el <select>: si estuvieran solo en
+// el componente, la validación de servidor sería una segunda copia a mano y
+// las dos se separarían al primer cambio.
+export const DESAFIOS = [
+	'Mi marca no refleja lo que realmente somos',
+	'Tengo tráfico, pero no convierte',
+	'Necesito contenido que sostenga la atención',
+	'Voy a lanzar algo nuevo',
+] as const;
+
+export const PRESUPUESTOS = [
+	'$1,000 – $3,000',
+	'$3,000 – $10,000',
+	'Más de $10,000',
+	'Prefiero hablarlo',
+] as const;

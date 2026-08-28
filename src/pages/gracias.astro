@@ -1,0 +1,60 @@
+---
+// Acuse de recibo para quien envía el formulario SIN JavaScript.
+//
+// Con JS el resultado se pinta en línea y aquí no llega nadie; esta página
+// existe para que el POST nativo tenga un sitio decente al que aterrizar en
+// lugar de un volcado de JSON. Se renderiza en servidor porque necesita leer
+// `?estado=` — prerenderizada no podría.
+export const prerender = false;
+
+import Layout from '../layouts/Layout.astro';
+import Icono from '../components/Icono.astro';
+import { CORREO } from '../datos/estudio';
+
+const correcto = Astro.url.searchParams.get('estado') !== 'error';
+---
+
+<Layout
+	titulo={correcto ? 'Mensaje enviado — indie studio' : 'No pudimos enviarlo — indie studio'}
+	descripcion="Acuse de recibo del formulario de contacto de indie studio."
+>
+	<main id="contenido" class="mx-auto flex min-h-screen max-w-[110rem] flex-col justify-center px-6 py-24 lg:px-10">
+		<p class="etiqueta">{correcto ? 'Recibido' : 'No enviado'}</p>
+
+		<h1
+			class="mt-6 max-w-[24ch] min-w-0 font-display text-4xl leading-[1.1] font-normal tracking-[-0.02em] text-balance wrap-anywhere text-hueso lg:text-6xl"
+		>
+			{
+				correcto ? (
+					<>Gracias. Lo tenemos <span class="trazo-bajo">delante</span>.</>
+				) : (
+					<>Algo se rompió por el <span class="trazo-bajo">camino</span>.</>
+				)
+			}
+		</h1>
+
+		<p class="mt-8 max-w-[46ch] text-lg leading-relaxed text-seda">
+			{
+				correcto ? (
+					'Respondemos en 48 horas laborables. Si es urgente, contesta directamente a este correo.'
+				) : (
+					<>
+						No pudimos registrar tu mensaje. Escríbenos a{' '}
+						<a href={`mailto:${CORREO}`} class="text-hueso underline underline-offset-4">
+							{CORREO}
+						</a>{' '}
+						y lo resolvemos por ahí.
+					</>
+				)
+			}
+		</p>
+
+		<a
+			href="/"
+			class="mt-12 inline-flex min-h-11 items-center gap-3 self-start rounded-full bg-seda/12 px-7 font-mono text-[0.8rem] font-medium tracking-[0.14em] text-hueso uppercase transition-colors duration-300 hover:bg-hueso hover:text-noche"
+		>
+			<Icono nombre="flecha-arriba" clase="text-base -rotate-90" />
+			Volver al inicio
+		</a>
+	</main>
+</Layout>
