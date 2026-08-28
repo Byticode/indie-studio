@@ -28,9 +28,10 @@ const año = new Date().getFullYear();
 
 <footer class="bg-noche">
 	{/* La transición noche → hueso es el arco de la casa, estirado a lo ancho.
-	    preserveAspectRatio="none" mantiene la curva baja en pantallas anchas. */}
+	    preserveAspectRatio="none" mantiene la curva baja en pantallas anchas.
+	    Arco bajo a propósito: es un gesto de paso, no una franja de aire. */}
 	<svg
-		class="block h-[clamp(2.5rem,7vw,7rem)] w-full"
+		class="block h-[clamp(1.75rem,4vw,3.5rem)] w-full"
 		viewBox="0 0 1440 120"
 		preserveAspectRatio="none"
 		aria-hidden="true"
@@ -39,19 +40,21 @@ const año = new Date().getFullYear();
 	</svg>
 
 	<div class="bg-hueso text-tinta">
-		<div class="mx-auto max-w-[110rem] px-6 pb-12 lg:px-10">
-			<!-- 1 · La despedida — el mensaje manda; el correo es la acción -->
+		<div class="mx-auto max-w-[110rem] px-6 pb-10 lg:px-10">
+			<!-- 1 · La despedida — el mensaje manda; el correo es la acción.
+			     Medida de 30ch: el mismo cuerpo entra en dos líneas en vez de
+			     tres, que es de donde salía buena parte del alto. -->
 			<div
 				data-revela
-				class="flex flex-col gap-12 pb-24 lg:flex-row lg:items-end lg:justify-between lg:gap-20"
+				class="flex flex-col gap-8 pb-14 lg:flex-row lg:items-end lg:justify-between lg:gap-20"
 			>
 				<p
-					class="max-w-[17ch] min-w-0 font-display text-3xl leading-[1.15] font-normal tracking-[-0.02em] text-balance wrap-anywhere sm:text-4xl lg:text-5xl"
+					class="max-w-[30ch] min-w-0 font-display text-2xl leading-[1.15] font-normal tracking-[-0.02em] text-balance wrap-anywhere sm:text-3xl lg:text-4xl"
 				>
 					Si has llegado hasta abajo, ya tenemos algo de qué <span class="trazo-bajo">hablar</span>.
 				</p>
 
-				<div class="flex flex-col items-start gap-4 lg:items-end">
+				<div class="flex flex-col items-start gap-3 lg:items-end">
 					<a
 						href={`mailto:${CORREO}`}
 						class="correo trazo-bajo font-display text-xl wrap-anywhere sm:text-2xl lg:text-3xl"
@@ -62,29 +65,18 @@ const año = new Date().getFullYear();
 				</div>
 			</div>
 
-			<!-- 2 · El colofón — la letra pequeña, en prosa, con los legales dentro -->
-			<p class="colofon max-w-[70ch] font-mono text-[0.85rem] leading-[1.85] text-tinta/70">
-				© {año} indie studio. Compuesto en Fraunces, Geist y Geist Mono; hecho con
-				Astro, a mano y sin plantilla. Puedes consultar el <a href="/legal">aviso legal</a>,
-				la <a href="/privacidad">política de privacidad</a> y el <a href="/cookies">uso de
-				cookies</a>.
-			</p>
-
-			<!-- 3 · La firma — el logotipo cierra, ya sin competir con nada -->
-			<div
-				data-revela
-				class="mt-24 flex flex-col gap-12 lg:flex-row lg:items-end lg:justify-between"
-			>
+			<!-- 2 · La firma — el logotipo cierra, ya sin competir con nada -->
+			<div data-revela class="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
 				<div class="min-w-0">
 					<p
-						class="font-display text-4xl leading-none font-medium tracking-[-0.025em] wrap-anywhere sm:text-6xl lg:text-7xl"
+						class="font-display text-3xl leading-none font-medium tracking-[-0.025em] wrap-anywhere sm:text-4xl lg:text-5xl"
 					>
 						indie<span class="text-tinta/60"> studio</span>
 					</p>
-					<p class="mt-5 text-base text-tinta/70">Independientes desde el primer día</p>
+					<p class="mt-3 text-base text-tinta/70">Independientes desde el primer día</p>
 				</div>
 
-				<ul class="flex flex-wrap items-center gap-3">
+				<ul class="flex flex-wrap items-center gap-2.5">
 					{
 						REDES.map((red) => (
 							<li>
@@ -103,6 +95,17 @@ const año = new Date().getFullYear();
 					</li>
 				</ul>
 			</div>
+
+			<!-- 3 · El colofón — la letra pequeña, en prosa, con los legales
+			     dentro. Va al final, que es donde un colofón va: estaba en
+			     medio, partiendo el pie en tres bloques con dos huecos grandes
+			     en vez de cerrarlo con una línea barata. -->
+			<p class="colofon mt-12 max-w-[70ch] font-mono text-[0.85rem] leading-[1.7] text-tinta/70">
+				© {año} indie studio. Compuesto en Fraunces, Geist y Geist Mono; hecho con
+				Astro, a mano y sin plantilla. Puedes consultar el <a href="/legal">aviso legal</a>,
+				la <a href="/privacidad">política de privacidad</a> y el <a href="/cookies">uso de
+				cookies</a>.
+			</p>
 		</div>
 	</div>
 </footer>
