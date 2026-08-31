@@ -1,0 +1,138 @@
+---
+import Layout from './Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { ACTUALIZADO } from '../datos/legal';
+
+// Envoltorio de las páginas legales.
+//
+// Documento largo, sin coreografía: aquí no corre GSAP, así que los
+// `data-revela` del pie se quedan visibles solos —para eso existe el patrón
+// `.listo`, que solo aplica la portada—. Una página legal se lee, no se anima.
+//
+// El estilo de la prosa va con `:global()` a propósito: el contenido llega por
+// <slot> desde la página, así que lleva el identificador de ámbito de ESA
+// página, no el de este layout, y un selector con ámbito no lo alcanzaría.
+
+interface Props {
+	titulo: string;
+	descripcion: string;
+	entradilla: string;
+}
+
+const { titulo, descripcion, entradilla } = Astro.props;
+---
+
+<Layout titulo={`${titulo} — indie studio`} descripcion={descripcion}>
+	<Header />
+
+	{/* pt-36 despeja la cabecera fija (h-20): sin eso el titular nace debajo. */}
+	<main id="contenido" class="px-6 pt-36 pb-24 lg:px-10 lg:pt-44">
+		<div class="mx-auto max-w-[110rem]">
+			<header class="max-w-[24ch]">
+				<p class="etiqueta">Legal</p>
+				<h1
+					class="mt-6 min-w-0 font-display text-4xl leading-[1.05] font-normal tracking-[-0.02em] text-balance wrap-anywhere text-hueso lg:text-6xl"
+				>
+					{titulo}
+				</h1>
+			</header>
+
+			<p class="mt-8 max-w-[58ch] text-lg leading-relaxed text-seda">{entradilla}</p>
+			<p class="etiqueta mt-6">Última actualización · {ACTUALIZADO}</p>
+
+			<article class="prosa mt-20 max-w-[68ch]">
+				<slot />
+			</article>
+		</div>
+	</main>
+
+	<Footer />
+</Layout>
+
+<style>
+	.prosa :global(h2) {
+		font-family: var(--font-display);
+		font-size: 1.5rem;
+		line-height: 1.2;
+		font-weight: 400;
+		letter-spacing: -0.015em;
+		color: var(--color-hueso);
+		margin-top: 4rem;
+		margin-bottom: 1.25rem;
+		overflow-wrap: anywhere;
+	}
+	.prosa :global(h2:first-child) {
+		margin-top: 0;
+	}
+	@media (min-width: 64rem) {
+		.prosa :global(h2) {
+			font-size: 1.875rem;
+		}
+	}
+
+	.prosa :global(h3) {
+		font-family: var(--font-mono);
+		font-size: 0.8rem;
+		font-weight: 500;
+		letter-spacing: 0.16em;
+		text-transform: uppercase;
+		color: var(--color-seda-dim);
+		margin-top: 2.5rem;
+		margin-bottom: 0.75rem;
+	}
+
+	.prosa :global(p) {
+		color: var(--color-seda);
+		line-height: 1.75;
+		margin-bottom: 1.25rem;
+	}
+
+	.prosa :global(ul) {
+		list-style: none;
+		margin: 0 0 1.25rem;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+	}
+	/* Guion en lugar de viñeta redonda: el sistema no tiene puntos ni reglas,
+	   y el guion largo pertenece al mismo registro tipográfico que el resto. */
+	.prosa :global(li) {
+		position: relative;
+		padding-left: 1.5rem;
+		color: var(--color-seda);
+		line-height: 1.7;
+	}
+	.prosa :global(li)::before {
+		content: '—';
+		position: absolute;
+		left: 0;
+		color: var(--color-seda-dim);
+	}
+
+	.prosa :global(strong) {
+		color: var(--color-hueso);
+		font-weight: 500;
+	}
+
+	.prosa :global(a) {
+		color: var(--color-hueso);
+		text-decoration: underline;
+		text-decoration-color: color-mix(in srgb, var(--color-hueso) 35%, transparent);
+		text-underline-offset: 0.25em;
+		transition: text-decoration-color 300ms var(--ease-ui);
+	}
+	.prosa :global(a:hover) {
+		text-decoration-color: var(--color-hueso);
+	}
+
+	/* Los marcadores sin rellenar tienen que cantar: si esto llega a producción
+	   con los corchetes puestos, que se vea a la primera y no en una auditoría. */
+	.prosa :global(.marcador) {
+		color: var(--color-hueso);
+		background: color-mix(in srgb, var(--color-seda) 18%, transparent);
+		padding: 0.1em 0.4em;
+		border-radius: 0.4rem;
+	}
+</style>

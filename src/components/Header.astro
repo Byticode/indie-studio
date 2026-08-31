@@ -4,11 +4,18 @@ import { REDES } from "../datos/estudio";
 
 // §01 Navegación — su única obligación es que el CTA de contacto
 // nunca quede a más de un clic, en cualquier punto del scroll.
+// Desde /privacidad o /cookies un '#contacto' no lleva a ninguna parte: hay
+// que salir a la raíz. Y desde la portada tiene que seguir empezando por '#'
+// para que el manejador de ScrollSmoother lo intercepte (busca a[href^="#"])
+// en lugar de recargar la página entera.
+const enPortada = Astro.url.pathname === "/";
+const ancla = (id: string) => (enPortada ? `#${id}` : `/#${id}`);
+
 const enlaces = [
-    { texto: "Trabajo", href: "#trabajo" },
-    { texto: "Servicios", href: "#servicios" },
-    { texto: "Proceso", href: "#proceso" },
-    { texto: "Estudio", href: "#estudio" },
+    { texto: "Trabajo", href: ancla("trabajo") },
+    { texto: "Servicios", href: ancla("servicios") },
+    { texto: "Proceso", href: ancla("proceso") },
+    { texto: "Estudio", href: ancla("estudio") },
 ];
 ---
 
@@ -22,7 +29,7 @@ const enlaces = [
         class="mx-auto flex h-20 max-w-[110rem] items-center justify-between px-6 lg:px-10"
     >
         <a
-            href="#inicio"
+            href={ancla("inicio")}
             class="font-display text-[1.1rem] font-medium tracking-[-0.01em] text-hueso"
         >
             indie<span class="text-seda-dim"> studio</span>
@@ -53,7 +60,7 @@ const enlaces = [
             </ul>
 
             <a
-                href="#contacto"
+                href={ancla("contacto")}
                 data-magnetico
                 class="hidden rounded-full bg-seda/12 px-6 py-2.5 font-mono text-[0.8rem] font-medium tracking-[0.14em] text-hueso uppercase transition-colors duration-300 hover:bg-hueso hover:text-noche md:inline-block"
             >
@@ -119,7 +126,7 @@ const enlaces = [
         </ul>
 
         <a
-            href="#contacto"
+            href={ancla("contacto")}
             data-cierra-menu
             class="block rounded-full bg-hueso py-4 text-center font-mono text-[0.85rem] font-medium tracking-[0.14em] text-noche uppercase"
         >

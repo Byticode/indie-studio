@@ -24,6 +24,10 @@ import { CORREO, REDES } from '../datos/estudio';
 // PENDIENTE: ciudad real del estudio y URL de cada perfil (viven en
 // src/datos/estudio.ts, no aquí).
 const año = new Date().getFullYear();
+
+// «Arriba» sube en la página actual, no vuelve a la portada. En la raíz el
+// destino es el hero; en las páginas legales, el <main id="contenido">.
+const arriba = Astro.url.pathname === '/' ? '#inicio' : '#contenido';
 ---
 
 <footer class="bg-noche">
@@ -88,7 +92,7 @@ const año = new Date().getFullYear();
 						))
 					}
 					<li>
-						<a href="#inicio" class="pildora">
+						<a href={arriba} class="pildora">
 							<Icono nombre="flecha-arriba" clase="text-base" />
 							Arriba
 						</a>

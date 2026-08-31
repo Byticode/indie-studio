@@ -1,0 +1,149 @@
+---
+import Legal from '../layouts/Legal.astro';
+import { CORREO } from '../datos/estudio';
+import { TITULAR, ENCARGADOS, DATOS_FORMULARIO } from '../datos/legal';
+
+// Política de privacidad.
+//
+// El contenido describe lo que el sitio hace DE VERDAD, auditado sobre el
+// código: un formulario, cero cookies, cero analítica, y cuatro terceros que
+// ven datos. No es una plantilla: si se añade analítica o se cambia de
+// proveedor, este texto miente hasta que se actualice.
+//
+// ⚠️  REVISIÓN JURÍDICA PENDIENTE. Está redactada con la estructura del RGPD
+// porque es la línea base más exigente y el sitio está en español, pero la
+// jurisdicción del estudio no está confirmada. Un abogado tiene que validarla
+// antes de publicar, y los marcadores de TITULAR hay que rellenarlos.
+---
+
+<Legal
+	titulo="Política de privacidad"
+	descripcion="Qué datos recoge indie studio, para qué los usa, con quién los comparte y cómo ejercer tus derechos."
+	entradilla="Esta página explica qué datos personales tratamos, por qué, durante cuánto tiempo y con quién los compartimos. Está escrita para leerse, no para cubrirnos las espaldas."
+>
+	<h2>1. Quién es el responsable</h2>
+	<p>
+		El responsable del tratamiento de tus datos es <strong class="marcador">{TITULAR.nombre}</strong>,
+		con identificación fiscal <span class="marcador">{TITULAR.identificacion}</span> y domicilio en
+		<span class="marcador">{TITULAR.domicilio}</span>.
+	</p>
+	<p>
+		Para cualquier asunto relacionado con tus datos, escribe a
+		<a href={`mailto:${CORREO}`}>{CORREO}</a>.
+	</p>
+
+	<h2>2. Qué datos tratamos</h2>
+	<h3>Los que nos das tú</h3>
+	<p>
+		Únicamente los del formulario de contacto. No hay ningún otro punto del sitio donde
+		podamos recoger datos tuyos:
+	</p>
+	<ul>
+		{
+			DATOS_FORMULARIO.map((dato) => (
+				<li>
+					{dato.campo} — {dato.obligatorio ? 'obligatorio' : 'opcional'}
+				</li>
+			))
+		}
+	</ul>
+
+	<h3>Los que genera tu visita</h3>
+	<p>
+		Nuestro proveedor de alojamiento registra automáticamente tu dirección IP, el navegador
+		que usas y la fecha y hora de la petición. Es el funcionamiento normal de cualquier
+		servidor web y nos sirve para mantener el sitio en pie y detectar abusos.
+	</p>
+
+	<h3>Lo que no hacemos</h3>
+	<p>
+		No instalamos cookies, no usamos analítica, no hay píxeles de seguimiento ni perfiles
+		publicitarios, y no tomamos decisiones automatizadas sobre ti. Lo detallamos en la
+		página de <a href="/cookies">uso de cookies</a>.
+	</p>
+
+	<h2>3. Para qué los usamos y con qué legitimación</h2>
+	<ul>
+		<li>
+			<strong>Responder a tu consulta y valorar si encajamos.</strong> La base es la aplicación
+			de medidas precontractuales a petición tuya: nos escribes para explorar un proyecto.
+		</li>
+		<li>
+			<strong>Mantener el sitio seguro y en funcionamiento.</strong> La base es nuestro interés
+			legítimo en que el servicio funcione y no se abuse del formulario.
+		</li>
+	</ul>
+	<p>
+		No usamos tus datos para enviarte comunicaciones comerciales que no hayas pedido, ni los
+		vendemos ni los cedemos a nadie con fines publicitarios.
+	</p>
+
+	<h2>4. Cuánto tiempo los conservamos</h2>
+	<ul>
+		<li>
+			Si de tu consulta no sale un proyecto, conservamos el mensaje mientras dure la
+			conversación y hasta un año después, por si retomas el contacto.
+		</li>
+		<li>
+			Si acabamos trabajando juntos, tus datos pasan a la relación contractual y se
+			conservan durante los plazos que exija la normativa fiscal y mercantil.
+		</li>
+		<li>
+			Los registros técnicos del servidor los conserva nuestro proveedor de alojamiento
+			según sus propios plazos.
+		</li>
+	</ul>
+
+	<h2>5. Con quién los compartimos</h2>
+	<p>
+		No cedemos tus datos a terceros. Sí nos apoyamos en proveedores que los tratan por
+		cuenta nuestra para poder prestarte el servicio:
+	</p>
+	<ul>
+		{
+			ENCARGADOS.map((encargado) => (
+				<li>
+					<strong>{encargado.nombre}</strong> ({encargado.pais}) — {encargado.motivo}
+				</li>
+			))
+		}
+	</ul>
+	<p>
+		Varios de estos proveedores están en Estados Unidos, así que hay transferencia
+		internacional de datos. Se ampara en las garantías que cada proveedor tiene suscritas
+		—cláusulas contractuales tipo o marcos de adecuación—, que puedes consultar en sus
+		respectivas políticas de privacidad.
+	</p>
+
+	<h2>6. Qué derechos tienes</h2>
+	<p>Sobre tus datos puedes ejercer, en cualquier momento y gratis:</p>
+	<ul>
+		<li><strong>Acceso</strong> — saber qué datos tuyos tenemos.</li>
+		<li><strong>Rectificación</strong> — corregir los que estén mal.</li>
+		<li><strong>Supresión</strong> — pedir que los borremos.</li>
+		<li><strong>Oposición</strong> — pedir que dejemos de tratarlos.</li>
+		<li><strong>Limitación</strong> — pedir que los conservemos pero no los usemos.</li>
+		<li><strong>Portabilidad</strong> — recibirlos en un formato que puedas llevarte.</li>
+	</ul>
+	<p>
+		Para ejercerlos, escribe a <a href={`mailto:${CORREO}`}>{CORREO}</a> indicando qué derecho
+		quieres ejercer. Responderemos en el plazo legal. Si crees que no hemos atendido tu
+		petición como debíamos, puedes reclamar ante
+		<span class="marcador">{TITULAR.autoridad.nombre}</span>.
+	</p>
+
+	<h2>7. Seguridad</h2>
+	<p>
+		El sitio se sirve íntegramente por conexión cifrada. El formulario valida y filtra los
+		envíos en el servidor, y el mensaje viaja directamente a nuestro buzón sin almacenarse en
+		ninguna base de datos intermedia. Ningún sistema es infalible, pero no guardamos más de
+		lo que necesitamos, que es la mejor medida de seguridad que existe.
+	</p>
+
+	<h2>8. Cambios en esta política</h2>
+	<p>
+		Si cambiamos cómo tratamos los datos —por ejemplo, si algún día añadimos analítica—
+		actualizaremos esta página y la fecha de revisión que aparece arriba. Te recomendamos
+		consultarla si vuelves a escribirnos pasado un tiempo.
+	</p>
+</Legal>

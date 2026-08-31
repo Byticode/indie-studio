@@ -1,0 +1,85 @@
+---
+import Legal from '../layouts/Legal.astro';
+import { CORREO } from '../datos/estudio';
+
+// Uso de cookies.
+//
+// El sitio no pone ninguna. Auditado sobre el código: ni document.cookie, ni
+// localStorage, ni sessionStorage, ni analítica, ni píxeles. Así que esta
+// página dice eso en lugar de la tabla de plantilla que todo el mundo copia.
+//
+// Lo que sí hay son dos peticiones a terceros que revelan la IP del visitante
+// sin poner cookies —Google Fonts y una imagen enlazada desde Pexels—, y se
+// declaran porque callarlas sería tan deshonesto como inventar cookies.
+//
+// ⚠️  Si algún día se añade analítica, este texto deja de ser cierto y el sitio
+// pasa a necesitar banner de consentimiento. Revisión jurídica pendiente.
+---
+
+<Legal
+	titulo="Uso de cookies"
+	descripcion="Este sitio no instala cookies. Qué significa eso exactamente y qué peticiones a terceros sí ocurren."
+	entradilla="La versión corta: este sitio no instala ninguna cookie, ni propia ni de terceros. Por eso no verás un banner pidiéndote permiso — no hay nada que consentir."
+>
+	<h2>1. No usamos cookies</h2>
+	<p>
+		Ni propias ni de terceros. Tampoco usamos <strong>almacenamiento local</strong>
+		(<code>localStorage</code>, <code>sessionStorage</code>) ni ninguna otra técnica para
+		guardar información en tu dispositivo.
+	</p>
+	<p>Esto significa, en concreto, que:</p>
+	<ul>
+		<li>No hay analítica. No sabemos cuánta gente entra, ni de dónde, ni qué mira.</li>
+		<li>No hay píxeles de seguimiento de redes sociales ni de plataformas publicitarias.</li>
+		<li>No creamos perfiles de comportamiento ni te seguimos por otros sitios.</li>
+		<li>No hay publicidad, ni propia ni servida por terceros.</li>
+	</ul>
+
+	<h2>2. Por qué no hay banner de consentimiento</h2>
+	<p>
+		El consentimiento de cookies existe para que autorices que se guarde información en tu
+		dispositivo. Como aquí no se guarda ninguna, no hay nada que autorizar. Un banner sería
+		ruido: te haría hacer clic en algo que no cambia absolutamente nada.
+	</p>
+
+	<h2>3. Lo que sí ocurre: peticiones a terceros</h2>
+	<p>
+		Que no haya cookies no significa que tu navegador no hable con nadie más. Para mostrar
+		esta página, tu navegador pide dos recursos a servidores ajenos, y en toda petición web
+		se comunica inevitablemente tu <strong>dirección IP</strong>:
+	</p>
+	<ul>
+		<li>
+			<strong>Google Fonts</strong> — las tipografías del sitio (Fraunces, Geist y Geist Mono)
+			se cargan desde los servidores de Google, que reciben tu IP al servirlas.
+		</li>
+		<li>
+			<strong>Pexels</strong> — una de las imágenes del portafolio se carga desde sus
+			servidores, que reciben tu IP al servirla.
+		</li>
+	</ul>
+	<p>
+		Ninguno de los dos instala cookies al hacerlo, pero ambos ven tu IP, y preferimos
+		decírtelo a que lo descubras mirando el inspector del navegador. Puedes consultar el
+		detalle de estos y del resto de proveedores en nuestra
+		<a href="/privacidad">política de privacidad</a>.
+	</p>
+
+	<h2>4. Cómo controlarlo desde tu lado</h2>
+	<p>
+		Como no dejamos nada en tu dispositivo, no hay nada que borrar. Si aun así quieres
+		limitar las peticiones a terceros, cualquier bloqueador de contenido las corta y el sitio
+		sigue funcionando: sin las tipografías de Google se muestra con las de tu sistema, y la
+		imagen del portafolio simplemente no carga.
+	</p>
+
+	<h2>5. Si esto cambia</h2>
+	<p>
+		Si en el futuro añadimos analítica o cualquier herramienta que use cookies, actualizaremos
+		esta página, cambiaremos la fecha de revisión de arriba y pediremos tu consentimiento
+		antes de activarla. Mientras esta página diga lo que dice, puedes darlo por cierto.
+	</p>
+	<p>
+		¿Dudas sobre esto? Escríbenos a <a href={`mailto:${CORREO}`}>{CORREO}</a>.
+	</p>
+</Legal>
